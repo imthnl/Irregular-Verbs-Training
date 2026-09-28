@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irregular Verbs | Флеш-карточки</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f6f7fb;
+            touch-action: pan-y; 
+        }
+
+        .perspective-1000 { perspective: 1000px; }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 1rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .is-flipped { transform: rotateX(180deg); }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            padding: 2rem;
+            background-color: white;
+        }
+
+        .card-text {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1a202c;
+            word-break: break-word;
+        }
+
+        @media (max-width: 640px) { .card-text { font-size: 1.75rem; } }
+
+        .flip-card-back { transform: rotateX(180deg); }
+
+        .fade-transition { transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; }
+        .fade-out { opacity: 0; transform: scale(0.98); }
+
+        .btn-control { transition: all 0.2s; }
+        .btn-control:hover { background-color: #edf2f7; transform: translateY(-2px); }
+        .btn-control:active { transform: translateY(0); }
+        
+        .progress-bar { transition: width 0.3s ease; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <header class="w-full bg-white shadow-sm py-3 px-4 sm:px-6 flex flex-wrap justify-between items-center sticky top-0 z-20 gap-3">
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 cursor-pointer" id="btnLogoHome">
+                <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <h1 class="text-xl font-bold text-slate-800 tracking-tight">Irregular Verbs</h1>
+            </div>
+
+            <!-- Вкладки разделов -->
+            <nav class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-sm">
+                <button id="navTabCards" class="flex items-center gap-1.5 px-3 py-1.5 font-semibold rounded-lg bg-white shadow-sm text-slate-800 transition-all focus:outline-none">
+                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <span>Карточки</span>
+                </button>
+                <button id="navTabGroups" class="flex items-center gap-1.5 px-3 py-1.5 font-semibold rounded-lg text-slate-500 hover:text-slate-800 transition-all focus:outline-none">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Группы глаголов</span>
+                </button>
+            </nav>
+        </div>
+        
+        <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+            <div id="mistakesCounterBadge" class="hidden items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span id="mistakesCountText">0 на повтор</span>
+            </div>
+
+            <!-- Режимы карточек -->
+            <div id="cardsModeControls" class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-sm">
+                <button id="btnModeSeq" class="px-3 sm:px-4 py-1.5 font-medium rounded-md bg-white shadow-sm text-slate-800 transition-all focus:outline-none">По порядку</button>
+                <button id="btnModeRand" class="px-3 sm:px-4 py-1.5 font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all focus:outline-none" title="Случайный режим с умным повторением ошибок">Случайный</button>
+                <button id="btnModeHard" class="px-3 sm:px-4 py-1.5 font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all focus:outline-none hidden" title="Тренировать только карточки с ошибками">Сложные (<span id="hardCount">0</span>)</button>
+            </div>
+
+            <button id="btnResetStats" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none" title="Сбросить историю ошибок">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 -translate-y-2">
+        <div id="toastContent" class="px-4 py-2 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 bg-slate-900 text-white border border-slate-700">
+            Сообщение
+        </div>
+    </div>
+
+    <div id="progressBarContainer" class="w-full h-1 bg-slate-200">
+        <div id="progressBar" class="progress-bar h-full bg-indigo-600 w-0"></div>
+    </div>
+
+    <main class="flex-grow flex flex-col items-center justify-start p-4 w-full max-w-5xl mx-auto">
+        
+        <!-- РАЗДЕЛ 1: ФЛЕШ-КАРТОЧКИ -->
+        <section id="sectionCards" class="w-full flex flex-col items-center">
+            
+            <!-- Панель выбора группы в карточках -->
+            <div class="w-full max-w-2xl flex flex-wrap items-center justify-between gap-3 mb-3 px-1">
+                <div class="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                    <span class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Группа:</span>
+                    <select id="groupSelect" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-sm font-semibold text-slate-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer max-w-[260px] sm:max-w-md truncate">
+                        <option value="all">Все 10 групп (170 глаголов)</option>
+                        <option value="1">1. Все 3 формы совпадают (23)</option>
+                        <option value="2">2. Совпадают 1-я и 3-я формы (4)</option>
+                        <option value="3">3. Совпадают 2-я и 3-я формы (61)</option>
+                        <option value="4">4. Чтение EA [iː] → [e] (6)</option>
+                        <option value="5">5. В корне I меняется на OU (4)</option>
+                        <option value="6">6. В корне ELL превращается в OLD (3)</option>
+                        <option value="7">7. Окончание -ought / -aught (7)</option>
+                        <option value="8">8. Чередование I - A - U (8)</option>
+                        <option value="9">9. Совсем неправильные (8)</option>
+                        <option value="10">10. Глаголы с -N на конце (46)</option>
+                        <option value="10.1">↳ 10.1 Во 2-й и 3-й формах O (13)</option>
+                        <option value="10.2">↳ 10.2 Только во 2-й форме O (8)</option>
+                        <option value="10.3">↳ 10.3 Окончания -EW и -OWN (7)</option>
+                        <option value="10.4">↳ 10.4 Другие случаи с -N (18)</option>
+                    </select>
+                </div>
+                <button id="btnOpenGroupsCatalog" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Справочник групп</span>
+                </button>
+            </div>
+
+            <!-- Карточка флеш-карточки -->
+            <div class="w-full max-w-2xl h-[380px] sm:h-[420px] perspective-1000 mb-5 mt-1 fade-transition" id="cardContainer">
+                <div class="flip-card-inner" id="flashcard">
+                    
+                    <div class="flip-card-front border-4 border-emerald-50">
+                        <div class="absolute top-6 left-6 flex items-center gap-2">
+                            <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200" id="frontHint">Form</span>
+                            <span class="text-xs font-medium text-slate-400 hidden sm:inline" id="frontGroupHint"></span>
+                        </div>
+                        <div id="frontBadge" class="absolute top-6 right-6 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 hidden items-center gap-1">
+                            ⚠️ Повторение
+                        </div>
+                        <div class="card-text text-center text-slate-700 px-4" id="cardFrontText">Загрузка...</div>
+                        <div class="absolute bottom-6 text-slate-400 text-sm flex items-center gap-1">
+                            Кликните или пробел, чтобы перевернуть
+                        </div>
+                    </div>
+                    
+                    <div class="flip-card-back border-4 border-indigo-50">
+                        <div class="absolute top-6 left-6 flex items-center gap-2">
+                            <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">English</span>
+                            <span class="text-xs font-medium text-slate-400 hidden sm:inline" id="backGroupHint"></span>
+                        </div>
+                        <div id="backBadge" class="absolute top-6 right-6 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 hidden items-center gap-1">
+                            ⚠️ Повторение
+                        </div>
+                        <div class="flex flex-col items-center justify-center px-4">
+                            <div class="flex items-center justify-center gap-3" id="cardBackTextContainer">
+                                <span class="card-text text-center text-indigo-900" id="cardBackText">Loading...</span>
+                                <button id="btnPronounce" class="p-2 text-indigo-400 hover:text-indigo-600 rounded-full hover:bg-indigo-50 transition-colors focus:outline-none" title="Прослушать произношение">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                </button>
+                            </div>
+                            <div class="text-base sm:text-xl font-mono text-indigo-600/90 mt-2 bg-indigo-50/80 border border-indigo-200/80 px-3.5 py-1 rounded-xl shadow-xs" id="cardBackTranscription">[...]</div>
+                        </div>
+                        <div class="absolute bottom-6 text-slate-400 text-sm flex items-center gap-1">
+                            Оцените ответ кнопками ниже
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Кнопки ответа: Не знаю / Знаю -->
+            <div class="w-full max-w-2xl flex items-center justify-center gap-3 sm:gap-4 mb-4" id="answerButtonsContainer">
+                <button id="btnWrong" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-white hover:bg-rose-50 text-rose-600 font-semibold border-2 border-rose-200 hover:border-rose-300 shadow-sm transition-all active:scale-95 text-base sm:text-lg focus:outline-none">
+                    <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-xs">✕</span>
+                    <span>Не знаю</span>
+                    <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono hidden sm:inline font-normal">1</span>
+                </button>
+                <button id="btnCorrect" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-white hover:bg-emerald-50 text-emerald-600 font-semibold border-2 border-emerald-200 hover:border-emerald-300 shadow-sm transition-all active:scale-95 text-base sm:text-lg focus:outline-none">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs">✓</span>
+                    <span>Знаю</span>
+                    <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono hidden sm:inline font-normal">2</span>
+                </button>
+            </div>
+
+            <!-- Навигационная панель карточек -->
+            <div class="w-full flex items-center justify-between bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-200 max-w-2xl">
+                <button id="btnRestart" class="btn-control p-3 rounded-full text-slate-500 hover:text-indigo-600 focus:outline-none" title="Перемешать и начать заново">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+
+                <div class="flex items-center gap-4 sm:gap-8">
+                    <button id="btnPrev" class="btn-control w-12 h-12 flex items-center justify-center rounded-full border border-slate-200 text-slate-700 bg-white shadow-sm focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed" title="Предыдущая (←)">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    
+                    <div class="font-bold text-lg w-28 text-center tracking-wide text-slate-800" id="cardCounter">1 / ?</div>
+                    
+                    <button id="btnNext" class="btn-control w-12 h-12 flex items-center justify-center rounded-full border border-slate-200 text-slate-700 bg-white shadow-sm focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed" title="Следующая (→)">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+
+                <div class="hidden sm:flex items-center text-slate-400 p-3" title="Клавиши: 1 (Не знаю), 2 (Знаю), Пробел (Перевернуть), ← / → (Навигация)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                </div>
+            </div>
+            
+            <p class="text-xs text-slate-400 mt-4 hidden sm:block text-center">
+                Клавиши: <span class="font-semibold text-slate-500">Пробел</span> — перевернуть, <span class="font-semibold text-rose-500">1</span> / <span class="font-semibold text-slate-500">↓</span> — Не знаю, <span class="font-semibold text-emerald-600">2</span> / <span class="font-semibold text-slate-500">↑</span> / <span class="font-semibold text-slate-500">Enter</span> — Знаю, <span class="font-semibold text-slate-500">←</span> <span class="font-semibold text-slate-500">→</span> — навигация
+            </p>
+        </section>
+
+        <!-- РАЗДЕЛ 2: ГРУППЫ ГЛАГОЛОВ (КАТАЛОГ И САМОПРОВЕРКА) -->
+        <section id="sectionGroups" class="w-full hidden flex-col items-center">
+            
+            <!-- Шапка раздела групп -->
+            <div class="w-full bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-3xl p-6 sm:p-8 border border-indigo-100/80 shadow-sm mb-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">10 групп по паттернам изменения</h2>
+                        <p class="text-slate-600 text-sm mt-1 max-w-2xl">
+                            170 глаголов разделены по принципу того, как меняются их формы.
+                        </p>
+                    </div>
+                    <button id="btnStartOverallQuiz" class="shrink-0 flex items-center gap-2 px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-200 transition-all active:scale-95">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Экспресс-тест (Все глаголы)</span>
+                    </button>
+                </div>
+
+                <!-- Строка быстрого поиска по всем глаголам -->
+                <div class="mt-4 relative">
+                    <input id="verbSearchInput" type="text" placeholder="Поиск глагола по любой форме или переводу (напр., 'sleep', 'купить', 'bought')..." class="w-full py-3.5 pl-11 pr-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+
+            <!-- Список 10 карточек групп -->
+            <div id="groupsCardsContainer" class="w-full flex flex-col gap-6">
+                <!-- Карточки групп рендерятся через JavaScript -->
+            </div>
+        </section>
+
+        <!-- Модальное окно: Завершение колоды карточек -->
+        <div id="completionModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl text-center transform transition-all">
+                <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                    🎉
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Отличная работа!</h2>
+                <p class="text-slate-600 text-sm mb-6" id="completionStatsText">
+                    Все карточки в текущей выборке пройдены.
+                </p>
+                <div class="flex flex-col gap-3">
+                    <button id="btnModalRestart" class="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-md shadow-indigo-200">
+                        Начать заново
+                    </button>
+                    <button id="btnModalHard" class="w-full py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold transition-all hidden shadow-md shadow-rose-200">
+                        Тренировать только сложные
+                    </button>
+                    <button id="btnModalClose" class="w-full py-2.5 px-4 rounded-xl text-slate-500 hover:bg-slate-100 font-medium transition-all text-sm">
+                        Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно: Интерактивный тест / Самопроверка по группе -->
+        <div id="quizModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl transform transition-all flex flex-col max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                    <div>
+                        <div class="text-xs uppercase tracking-wider font-bold text-indigo-600" id="quizGroupBadge">Группа 1</div>
+                        <h3 class="text-xl font-bold text-slate-800" id="quizTitle">Проверка знаний</h3>
+                    </div>
+                    <button id="btnQuizClose" class="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <div id="quizProgress" class="w-full bg-slate-100 rounded-full h-1.5 mb-6 overflow-hidden">
+                    <div id="quizProgressBar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Вопрос теста -->
+                <div id="quizQuestionBody" class="flex-grow flex flex-col justify-center">
+                    <div class="text-center py-4">
+                        <div class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1" id="quizQuestionCounter">Вопрос 1 из 10</div>
+                        <div class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2" id="quizVerbPrompt">speak</div>
+                        <div class="text-slate-500 font-medium text-base mb-6" id="quizMeaningPrompt">говорить</div>
+                        <p class="text-xs text-slate-500 font-medium mb-4">Каковы формы Past Simple (V2) и Participle II (V3)?</p>
+                    </div>
+
+                    <!-- Варианты ответов -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="quizOptionsContainer">
+                        <!-- Варианты генерируются через JS -->
+                    </div>
+
+                    <div id="quizFeedback" class="min-h-[2rem] text-center text-sm font-semibold mb-2"></div>
+                </div>
+
+                <!-- Экран итогов теста -->
+                <div id="quizResultsBody" class="hidden flex-col items-center text-center py-6">
+                    <div class="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-4xl mb-4 font-bold">
+                        🏆
+                    </div>
+                    <h4 class="text-2xl font-extrabold text-slate-900 mb-1">Тест завершен!</h4>
+                    <p class="text-slate-600 text-sm mb-4" id="quizScoreText">Ваш результат: 9 из 10 правильных ответов</p>
+                    
+                    <div class="w-full bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left text-xs mb-6 max-h-48 overflow-y-auto" id="quizMistakesList">
+                        <!-- Список ошибок -->
+                    </div>
+
+                    <div class="w-full flex flex-col sm:flex-row gap-3">
+                        <button id="btnQuizRestart" class="flex-1 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all">
+                            Повторить тест
+                        </button>
+                        <button id="btnQuizTrainCards" class="flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all">
+                            Тренировать карточками
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4 border-t border-slate-100" id="quizFooter">
+                    <button id="btnQuizNext" class="hidden px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition-all">
+                        Следующий вопрос →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const rawVerbs = [
+            // 1. Все три формы совпадают (23)
+            { v1: 'bet', v2: 'bet', v3: 'bet', t1: '[bet]', t2: '[bet]', t3: '[bet]', m1: 'держать пари', m2: 'держал пари', m3: 'заключивший пари' },
+            { v1: 'broadcast', v2: 'broadcast', v3: 'broadcast', t1: '[ˈbrɔːdkɑːst]', t2: '[ˈbrɔːdkɑːst]', t3: '[ˈbrɔːdkɑːst]', m1: 'передавать в эфире', m2: 'передавал в эфире', m3: 'переданный в эфире' },
+            { v1: 'burst', v2: 'burst', v3: 'burst', t1: '[bɜːst]', t2: '[bɜːst]', t3: '[bɜːst]', m1: 'лопаться', m2: 'лопнул', m3: 'лопнувший' },
+            { v1: 'cast', v2: 'cast', v3: 'cast', t1: '[kɑːst]', t2: '[kɑːst]', t3: '[kɑːst]', m1: 'распределять роли / отбрасывать', m2: 'распределил / отбросил', m3: 'распределенный / отброшенный' },
+            { v1: 'cost', v2: 'cost', v3: 'cost', t1: '[kɒst]', t2: '[kɒst]', t3: '[kɒst]', m1: 'стоить', m2: 'стоил', m3: 'стоивший' },
+            { v1: 'cut', v2: 'cut', v3: 'cut', t1: '[kʌt]', t2: '[kʌt]', t3: '[kʌt]', m1: 'резать', m2: 'резал', m3: 'порезанный' },
+            { v1: 'fit', v2: 'fit', v3: 'fit', t1: '[fɪt]', t2: '[fɪt]', t3: '[fɪt]', m1: 'подходить (об одежде)', m2: 'подошел (по размеру)', m3: 'подошедший' },
+            { v1: 'forecast', v2: 'forecast', v3: 'forecast', t1: '[ˈfɔːkɑːst]', t2: '[ˈfɔːkɑːst]', t3: '[ˈfɔːkɑːst]', m1: 'прогнозировать', m2: 'прогнозировал', m3: 'спрогнозированный' },
+            { v1: 'hit', v2: 'hit', v3: 'hit', t1: '[hɪt]', t2: '[hɪt]', t3: '[hɪt]', m1: 'ударять', m2: 'ударил', m3: 'ударенный' },
+            { v1: 'hurt', v2: 'hurt', v3: 'hurt', t1: '[hɜːt]', t2: '[hɜːt]', t3: '[hɜːt]', m1: 'причинять боль', m2: 'причинял боль', m3: 'пострадавший' },
+            { v1: 'let', v2: 'let', v3: 'let', t1: '[let]', t2: '[let]', t3: '[let]', m1: 'позволять', m2: 'позволил', m3: 'позволенный' },
+            { v1: 'offset', v2: 'offset', v3: 'offset', t1: '[ˈɒfset]', t2: '[ˈɒfset]', t3: '[ˈɒfset]', m1: 'компенсировать', m2: 'компенсировал', m3: 'компенсированный' },
+            { v1: 'preset', v2: 'preset', v3: 'preset', t1: '[ˌpriːˈset]', t2: '[ˌpriːˈset]', t3: '[ˌpriːˈset]', m1: 'настроить заранее', m2: 'настроил заранее', m3: 'заранее настроенный' },
+            { v1: 'put', v2: 'put', v3: 'put', t1: '[pʊt]', t2: '[pʊt]', t3: '[pʊt]', m1: 'класть', m2: 'положил', m3: 'положенный' },
+            { v1: 'quit', v2: 'quit', v3: 'quit', t1: '[kwɪt]', t2: '[kwɪt]', t3: '[kwɪt]', m1: 'бросать / прекращать', m2: 'бросил', m3: 'брошенный' },
+            { v1: 'rid', v2: 'rid', v3: 'rid', t1: '[rɪd]', t2: '[rɪd]', t3: '[rɪd]', m1: 'избавлять', m2: 'избавил', m3: 'избавленный' },
+            { v1: 'set', v2: 'set', v3: 'set', t1: '[set]', t2: '[set]', t3: '[set]', m1: 'устанавливать', m2: 'установил', m3: 'установленный' },
+            { v1: 'shed', v2: 'shed', v3: 'shed', t1: '[ʃed]', t2: '[ʃed]', t3: '[ʃed]', m1: 'сбрасывать / проливать', m2: 'сбросил / пролил', m3: 'сброшенный / пролитый' },
+            { v1: 'shit', v2: 'shit', v3: 'shit', t1: '[ʃɪt]', t2: '[ʃɪt]', t3: '[ʃɪt]', m1: 'гадить', m2: 'нагадил', m3: 'загаженный' },
+            { v1: 'shut', v2: 'shut', v3: 'shut', t1: '[ʃʌt]', t2: '[ʃʌt]', t3: '[ʃʌt]', m1: 'закрывать', m2: 'закрыл', m3: 'закрытый' },
+            { v1: 'split', v2: 'split', v3: 'split', t1: '[splɪt]', t2: '[splɪt]', t3: '[splɪt]', m1: 'разделять / раскалывать', m2: 'разделил / расколол', m3: 'разделенный' },
+            { v1: 'spread', v2: 'spread', v3: 'spread', t1: '[spred]', t2: '[spred]', t3: '[spred]', m1: 'распространять', m2: 'распространил', m3: 'распространенный' },
+            { v1: 'upset', v2: 'upset', v3: 'upset', t1: '[ʌpˈset]', t2: '[ʌpˈset]', t3: '[ʌpˈset]', m1: 'огорчать', m2: 'огорчил', m3: 'огорченный' },
+            
+            // 2. Совпадают первая и третья формы (4)
+            { v1: 'become', v2: 'became', v3: 'become', t1: '[bɪˈkʌm]', t2: '[bɪˈkeɪm]', t3: '[bɪˈkʌm]', m1: 'становиться', m2: 'стал', m3: 'ставший' },
+            { v1: 'come', v2: 'came', v3: 'come', t1: '[kʌm]', t2: '[keɪm]', t3: '[kʌm]', m1: 'приходить', m2: 'пришел', m3: 'пришедший' },
+            { v1: 'overcome', v2: 'overcame', v3: 'overcome', t1: '[ˌəʊvəˈkʌm]', t2: '[ˌəʊvəˈkeɪm]', t3: '[ˌəʊvəˈkʌm]', m1: 'преодолевать', m2: 'преодолел', m3: 'преодолевший / преодоленный' },
+            { v1: 'run', v2: 'ran', v3: 'run', t1: '[rʌn]', t2: '[ræn]', t3: '[rʌn]', m1: 'бежать', m2: 'бежал', m3: 'пробежавший' },
+            
+            // 3. Совпадают вторая и третья (61)
+            { v1: 'behold', v2: 'beheld', v3: 'beheld', t1: '[bɪˈhəʊld]', t2: '[bɪˈheld]', t3: '[bɪˈheld]', m1: 'видеть / замечать', m2: 'увидел', m3: 'увиденный' },
+            { v1: 'bend', v2: 'bent', v3: 'bent', t1: '[bend]', t2: '[bent]', t3: '[bent]', m1: 'гнуть', m2: 'согнул', m3: 'согнутый' },
+            { v1: 'bleed', v2: 'bled', v3: 'bled', t1: '[bliːd]', t2: '[bled]', t3: '[bled]', m1: 'кровоточить', m2: 'кровоточил', m3: 'истекший кровью' },
+            { v1: 'breed', v2: 'bred', v3: 'bred', t1: '[briːd]', t2: '[bred]', t3: '[bred]', m1: 'разводить (животных)', m2: 'разводил', m3: 'выведенный' },
+            { v1: 'build', v2: 'built', v3: 'built', t1: '[bɪld]', t2: '[bɪlt]', t3: '[bɪlt]', m1: 'строить', m2: 'построил', m3: 'построенный' },
+            { v1: 'burn', v2: 'burned/burnt', v3: 'burned/burnt', t1: '[bɜːn]', t2: '[bɜːnd / bɜːnt]', t3: '[bɜːnd / bɜːnt]', m1: 'жечь / гореть', m2: 'сжег / горел', m3: 'сожженный' },
+            { v1: 'cling', v2: 'clung', v3: 'clung', t1: '[klɪŋ]', t2: '[klʌŋ]', t3: '[klʌŋ]', m1: 'цепляться', m2: 'вцепился', m3: 'вцепившийся' },
+            { v1: 'creep', v2: 'crept', v3: 'crept', t1: '[kriːp]', t2: '[krept]', t3: '[krept]', m1: 'ползать', m2: 'полз', m3: 'проползший' },
+            { v1: 'dig', v2: 'dug', v3: 'dug', t1: '[dɪɡ]', t2: '[dʌɡ]', t3: '[dʌɡ]', m1: 'копать', m2: 'копал', m3: 'выкопанный' },
+            { v1: 'dive', v2: 'dived', v3: 'dived', t1: '[daɪv]', t2: '[daɪvd]', t3: '[daɪvd]', m1: 'нырять', m2: 'нырнул', m3: 'нырнувший' },
+            { v1: 'dwell', v2: 'dwelled/dwelt', v3: 'dwelled/dwelt', t1: '[dwel]', t2: '[dweld / dwelt]', t3: '[dweld / dwelt]', m1: 'обитать', m2: 'обитал', m3: 'обитавший' },
+            { v1: 'feed', v2: 'fed', v3: 'fed', t1: '[fiːd]', t2: '[fed]', t3: '[fed]', m1: 'кормить', m2: 'кормил', m3: 'накормленный' },
+            { v1: 'feel', v2: 'felt', v3: 'felt', t1: '[fiːl]', t2: '[felt]', t3: '[felt]', m1: 'чувствовать', m2: 'почувствовал', m3: 'почувствованный / почувствовавший' },
+            { v1: 'flee', v2: 'fled', v3: 'fled', t1: '[fliː]', t2: '[fled]', t3: '[fled]', m1: 'спасаться бегством', m2: 'сбежал', m3: 'сбежавший' },
+            { v1: 'get', v2: 'got', v3: 'got', t1: '[ɡet]', t2: '[ɡɒt]', t3: '[ɡɒt]', m1: 'получать', m2: 'получил', m3: 'полученный' },
+            { v1: 'hang', v2: 'hung', v3: 'hung', t1: '[hæŋ]', t2: '[hʌŋ]', t3: '[hʌŋ]', m1: 'висеть / вешать', m2: 'висел / повесил', m3: 'повешенный' },
+            { v1: 'have', v2: 'had', v3: 'had', t1: '[hæv]', t2: '[hæd]', t3: '[hæd]', m1: 'иметь', m2: 'имел', m3: 'имевший' },
+            { v1: 'hold', v2: 'held', v3: 'held', t1: '[həʊld]', t2: '[held]', t3: '[held]', m1: 'держать', m2: 'держал', m3: 'удерживаемый' },
+            { v1: 'keep', v2: 'kept', v3: 'kept', t1: '[kiːp]', t2: '[kept]', t3: '[kept]', m1: 'хранить', m2: 'хранил', m3: 'сохраненный' },
+            { v1: 'lay', v2: 'laid', v3: 'laid', t1: '[leɪ]', t2: '[leɪd]', t3: '[leɪd]', m1: 'класть (что-то)', m2: 'положил', m3: 'положенный' },
+            { v1: 'lead', v2: 'led', v3: 'led', t1: '[liːd]', t2: '[led]', t3: '[led]', m1: 'возглавлять / вести', m2: 'вел', m3: 'ведомый' },
+            { v1: 'lean', v2: 'leaned/leant', v3: 'leaned/leant', t1: '[liːn]', t2: '[liːnd / lent]', t3: '[liːnd / lent]', m1: 'опираться', m2: 'оперся', m3: 'опершийся' },
+            { v1: 'leap', v2: 'leaped/leapt', v3: 'leaped/leapt', t1: '[liːp]', t2: '[liːpt / lept]', t3: '[liːpt / lept]', m1: 'прыгать', m2: 'прыгнул', m3: 'прыгнувший' },
+            { v1: 'learn', v2: 'learnt/learned', v3: 'learnt/learned', t1: '[lɜːn]', t2: '[lɜːnt / lɜːnd]', t3: '[lɜːnt / lɜːnd]', m1: 'учить', m2: 'выучил', m3: 'выученный' },
+            { v1: 'leave', v2: 'left', v3: 'left', t1: '[liːv]', t2: '[left]', t3: '[left]', m1: 'покидать / оставлять', m2: 'покинул / оставил', m3: 'оставленный' },
+            { v1: 'lend', v2: 'lent', v3: 'lent', t1: '[lend]', t2: '[lent]', t3: '[lent]', m1: 'давать взаймы', m2: 'одолжил', m3: 'одолженный' },
+            { v1: 'lie', v2: 'lied', v3: 'lied', t1: '[laɪ]', t2: '[laɪd]', t3: '[laɪd]', m1: 'врать', m2: 'соврал', m3: 'солгавший' },
+            { v1: 'light', v2: 'lit/lighted', v3: 'lit/lighted', t1: '[laɪt]', t2: '[lɪt / ˈlaɪtɪd]', t3: '[lɪt / ˈlaɪtɪd]', m1: 'зажигать / освещать', m2: 'зажег / осветил', m3: 'зажженный / освещенный' },
+            { v1: 'lose', v2: 'lost', v3: 'lost', t1: '[luːz]', t2: '[lɒst]', t3: '[lɒst]', m1: 'терять', m2: 'потерял', m3: 'потерянный' },
+            { v1: 'make', v2: 'made', v3: 'made', t1: '[meɪk]', t2: '[meɪd]', t3: '[meɪd]', m1: 'делать / изготовлять', m2: 'сделал', m3: 'сделанный' },
+            { v1: 'meet', v2: 'met', v3: 'met', t1: '[miːt]', t2: '[met]', t3: '[met]', m1: 'встречать', m2: 'встретил', m3: 'встреченный' },
+            { v1: 'oversleep', v2: 'overslept', v3: 'overslept', t1: '[ˌəʊvəˈsliːp]', t2: '[ˌəʊvəˈslept]', t3: '[ˌəʊvəˈslept]', m1: 'просыпать (сон)', m2: 'проспал', m3: 'проспавший' },
+            { v1: 'pay', v2: 'paid', v3: 'paid', t1: '[peɪ]', t2: '[peɪd]', t3: '[peɪd]', m1: 'платить', m2: 'заплатил', m3: 'оплаченный' },
+            { v1: 'relay', v2: 'relaid', v3: 'relaid', t1: '[ˌriːˈleɪ]', t2: '[ˌriːˈleɪd]', t3: '[ˌriːˈleɪd]', m1: 'перекладывать', m2: 'переложил', m3: 'переложенный' },
+            { v1: 'saw', v2: 'sawed', v3: 'sawed', t1: '[sɔː]', t2: '[sɔːd]', t3: '[sɔːd]', m1: 'пилить', m2: 'пилил', m3: 'распиленный' },
+            { v1: 'say', v2: 'said', v3: 'said', t1: '[seɪ]', t2: '[sed]', t3: '[sed]', m1: 'сказать / говорить', m2: 'сказал', m3: 'сказанный' },
+            { v1: 'send', v2: 'sent', v3: 'sent', t1: '[send]', t2: '[sent]', t3: '[sent]', m1: 'отправлять', m2: 'отправил', m3: 'отправленный' },
+            { v1: 'sew', v2: 'sewed', v3: 'sewed', t1: '[səʊ]', t2: '[səʊd]', t3: '[səʊd]', m1: 'шить', m2: 'шил', m3: 'сшитый' },
+            { v1: 'shine', v2: 'shone', v3: 'shone', t1: '[ʃaɪn]', t2: '[ʃɒn]', t3: '[ʃɒn]', m1: 'светить / сиять', m2: 'светил / сиял', m3: 'сиявший' },
+            { v1: 'shoot', v2: 'shot', v3: 'shot', t1: '[ʃuːt]', t2: '[ʃɒt]', t3: '[ʃɒt]', m1: 'стрелять', m2: 'выстрелил', m3: 'подстреленный' },
+            { v1: 'sit', v2: 'sat', v3: 'sat', t1: '[sɪt]', t2: '[sæt]', t3: '[sæt]', m1: 'сидеть', m2: 'сидел', m3: 'сидевший' },
+            { v1: 'sleep', v2: 'slept', v3: 'slept', t1: '[sliːp]', t2: '[slept]', t3: '[slept]', m1: 'спать', m2: 'спал', m3: 'спавший' },
+            { v1: 'slide', v2: 'slid', v3: 'slid', t1: '[slaɪd]', t2: '[slɪd]', t3: '[slɪd]', m1: 'скользить', m2: 'скользил', m3: 'соскользнувший' },
+            { v1: 'smell', v2: 'smelled/smelt', v3: 'smelled/smelt', t1: '[smel]', t2: '[smeld / smelt]', t3: '[smeld / smelt]', m1: 'нюхать / пахнуть', m2: 'нюхал / пахнул', m3: 'пахнувший' },
+            { v1: 'speed', v2: 'sped', v3: 'sped', t1: '[spiːd]', t2: '[sped]', t3: '[sped]', m1: 'мчаться / устанавливать скорость', m2: 'мчался', m3: 'разогнанный' },
+            { v1: 'spell', v2: 'spelled/spelt', v3: 'spelled/spelt', t1: '[spel]', t2: '[speld / spelt]', t3: '[speld / spelt]', m1: 'произносить по буквам', m2: 'произнес по буквам', m3: 'произнесенный по буквам' },
+            { v1: 'spend', v2: 'spent', v3: 'spent', t1: '[spend]', t2: '[spent]', t3: '[spent]', m1: 'тратить (деньги/время)', m2: 'потратил', m3: 'потраченный' },
+            { v1: 'spill', v2: 'spilled/spilt', v3: 'spilled/spilt', t1: '[spɪl]', t2: '[spɪld / spɪlt]', t3: '[spɪld / spɪlt]', m1: 'проливать', m2: 'пролил', m3: 'пролитый' },
+            { v1: 'spin', v2: 'spun', v3: 'spun', t1: '[spɪn]', t2: '[spʌn]', t3: '[spʌn]', m1: 'крутить / вращать', m2: 'крутил', m3: 'скрученный' },
+            { v1: 'spit', v2: 'spat', v3: 'spat', t1: '[spɪt]', t2: '[spæt]', t3: '[spæt]', m1: 'плевать', m2: 'плюнул', m3: 'выплюнутый' },
+            { v1: 'spoil', v2: 'spoiled/spoilt', v3: 'spoiled/spoilt', t1: '[spɔɪl]', t2: '[spɔɪld / spɔɪlt]', t3: '[spɔɪld / spɔɪlt]', m1: 'портить', m2: 'испортил', m3: 'испорченный' },
+            { v1: 'stand', v2: 'stood', v3: 'stood', t1: '[stænd]', t2: '[stʊd]', t3: '[stʊd]', m1: 'стоять', m2: 'стоял', m3: 'стоявший' },
+            { v1: 'stick', v2: 'stuck', v3: 'stuck', t1: '[stɪk]', t2: '[stʌk]', t3: '[stʌk]', m1: 'втыкать / липнуть', m2: 'воткнул / прилип', m3: 'воткнутый / прилипший' },
+            { v1: 'stink', v2: 'stunk', v3: 'stunk', t1: '[stɪŋk]', t2: '[stʌŋk]', t3: '[stʌŋk]', m1: 'вонять', m2: 'вонял', m3: 'провонявший' },
+            { v1: 'strike', v2: 'struck', v3: 'struck', t1: '[straɪk]', t2: '[strʌk]', t3: '[strʌk]', m1: 'ударять', m2: 'ударил', m3: 'ударенный' },
+            { v1: 'sweat', v2: 'sweated', v3: 'sweated', t1: '[swet]', t2: '[ˈswetɪd]', t3: '[ˈswetɪd]', m1: 'потеть', m2: 'вспотел', m3: 'вспотевший' },
+            { v1: 'sweep', v2: 'swept', v3: 'swept', t1: '[swiːp]', t2: '[swept]', t3: '[swept]', m1: 'подметать', m2: 'подмел', m3: 'подметенный' },
+            { v1: 'swing', v2: 'swung', v3: 'swung', t1: '[swɪŋ]', t2: '[swʌŋ]', t3: '[swʌŋ]', m1: 'раскачивать', m2: 'раскачал', m3: 'раскачанный' },
+            { v1: 'understand', v2: 'understood', v3: 'understood', t1: '[ˌʌndəˈstænd]', t2: '[ˌʌndəˈstʊd]', t3: '[ˌʌndəˈstʊd]', m1: 'понимать', m2: 'понял', m3: 'понятый' },
+            { v1: 'wet', v2: 'wetted/wet', v3: 'wetted/wet', t1: '[wet]', t2: '[ˈwetɪd / wet]', t3: '[ˈwetɪd / wet]', m1: 'мочить', m2: 'намочил', m3: 'намоченный' },
+            { v1: 'win', v2: 'won', v3: 'won', t1: '[wɪn]', t2: '[wʌn]', t3: '[wʌn]', m1: 'выигрывать', m2: 'выиграл', m3: 'выигранный' },
+            
+            // 4. Меняется произношение у EA в корне (6)
+            { v1: 'deal', v2: 'dealt', v3: 'dealt', t1: '[diːl]', t2: '[delt]', t3: '[delt]', m1: 'иметь дело', m2: 'имел дело', m3: 'имевший дело' },
+            { v1: 'dream', v2: 'dreamt', v3: 'dreamt', t1: '[driːm]', t2: '[dremt]', t3: '[dremt]', m1: 'мечтать / дремать', m2: 'мечтал', m3: 'мечтавший' },
+            { v1: 'hear', v2: 'heard', v3: 'heard', t1: '[hɪə]', t2: '[hɜːd]', t3: '[hɜːd]', m1: 'слышать', m2: 'услышал', m3: 'услышанный' },
+            { v1: 'mean', v2: 'meant', v3: 'meant', t1: '[miːn]', t2: '[ment]', t3: '[ment]', m1: 'иметь в виду', m2: 'имел в виду', m3: 'имевшийся в виду' },
+            { v1: 'overhear', v2: 'overheard', v3: 'overheard', t1: '[ˌəʊvəˈhɪə]', t2: '[ˌəʊvəˈhɜːd]', t3: '[ˌəʊvəˈhɜːd]', m1: 'подслушивать', m2: 'подслушал', m3: 'подслушанный' },
+            { v1: 'read', v2: 'read', v3: 'read', t1: '[riːd]', t2: '[red]', t3: '[red]', m1: 'читать', m2: 'читал', m3: 'прочитанный' },
+            
+            // 5. В корне I меняется на OU (4)
+            { v1: 'bind', v2: 'bound', v3: 'bound', t1: '[baɪnd]', t2: '[baʊnd]', t3: '[baʊnd]', m1: 'связывать', m2: 'связал', m3: 'связанный' },
+            { v1: 'find', v2: 'found', v3: 'found', t1: '[faɪnd]', t2: '[faʊnd]', t3: '[faʊnd]', m1: 'находить', m2: 'нашел', m3: 'найденный' },
+            { v1: 'grind', v2: 'ground', v3: 'ground', t1: '[ɡraɪnd]', t2: '[ɡraʊnd]', t3: '[ɡraʊnd]', m1: 'точить / молоть', m2: 'молол', m3: 'молотый' },
+            { v1: 'wind', v2: 'wound', v3: 'wound', t1: '[waɪnd]', t2: '[waʊnd]', t3: '[waʊnd]', m1: 'заводить (механизм)', m2: 'заводил', m3: 'заведенный' },
+            
+            // 6. В корне ELL превращается OLD (3)
+            { v1: 'foretell', v2: 'foretold', v3: 'foretold', t1: '[fɔːˈtel]', t2: '[fɔːˈtəʊld]', t3: '[fɔːˈtəʊld]', m1: 'предсказывать', m2: 'предсказал', m3: 'предсказанный' },
+            { v1: 'sell', v2: 'sold', v3: 'sold', t1: '[sel]', t2: '[səʊld]', t3: '[səʊld]', m1: 'продавать', m2: 'продал', m3: 'проданный' },
+            { v1: 'tell', v2: 'told', v3: 'told', t1: '[tel]', t2: '[təʊld]', t3: '[təʊld]', m1: 'рассказывать', m2: 'рассказал', m3: 'рассказанный' },
+            
+            // 7. Вторая и третья форма оканчиваются на -ought или -aught (7)
+            { v1: 'bring', v2: 'brought', v3: 'brought', t1: '[brɪŋ]', t2: '[brɔːt]', t3: '[brɔːt]', m1: 'приносить', m2: 'принес', m3: 'принесенный' },
+            { v1: 'buy', v2: 'bought', v3: 'bought', t1: '[baɪ]', t2: '[bɔːt]', t3: '[bɔːt]', m1: 'покупать', m2: 'купил', m3: 'купленный' },
+            { v1: 'catch', v2: 'caught', v3: 'caught', t1: '[kætʃ]', t2: '[kɔːt]', t3: '[kɔːt]', m1: 'ловить', m2: 'поймал', m3: 'пойманный' },
+            { v1: 'fight', v2: 'fought', v3: 'fought', t1: '[faɪt]', t2: '[fɔːt]', t3: '[fɔːt]', m1: 'бороться', m2: 'боролся', m3: 'боровшийся' },
+            { v1: 'seek', v2: 'sought', v3: 'sought', t1: '[siːk]', t2: '[sɔːt]', t3: '[sɔːt]', m1: 'искать', m2: 'искал', m3: 'искомый' },
+            { v1: 'teach', v2: 'taught', v3: 'taught', t1: '[tiːtʃ]', t2: '[tɔːt]', t3: '[tɔːt]', m1: 'учить (кого-то)', m2: 'научил', m3: 'обученный' },
+            { v1: 'think', v2: 'thought', v3: 'thought', t1: '[θɪŋk]', t2: '[θɔːt]', t3: '[θɔːt]', m1: 'думать', m2: 'подумал', m3: 'обдуманный' },
+            
+            // 8. Происходит чередование I-A-U (8)
+            { v1: 'begin', v2: 'began', v3: 'begun', t1: '[bɪˈɡɪn]', t2: '[bɪˈɡæn]', t3: '[bɪˈɡʌn]', m1: 'начинать', m2: 'начал', m3: 'начатый' },
+            { v1: 'drink', v2: 'drank', v3: 'drunk', t1: '[drɪŋk]', t2: '[dræŋk]', t3: '[drʌŋk]', m1: 'пить', m2: 'выпил', m3: 'выпитый' },
+            { v1: 'ring', v2: 'rang', v3: 'rung', t1: '[rɪŋ]', t2: '[ræŋ]', t3: '[rʌŋ]', m1: 'звонить', m2: 'позвонил', m3: 'позвонивший' },
+            { v1: 'shrink', v2: 'shrank', v3: 'shrunk', t1: '[ʃrɪŋk]', t2: '[ʃræŋk]', t3: '[ʃrʌŋk]', m1: 'сжиматься', m2: 'сжался', m3: 'сжавшийся' },
+            { v1: 'sing', v2: 'sang', v3: 'sung', t1: '[sɪŋ]', t2: '[sæŋ]', t3: '[sʌŋ]', m1: 'петь', m2: 'спел', m3: 'спетый' },
+            { v1: 'sink', v2: 'sank', v3: 'sunk', t1: '[sɪŋk]', t2: '[sæŋk]', t3: '[sʌŋk]', m1: 'тонуть', m2: 'утонул', m3: 'утонувший' },
+            { v1: 'spring', v2: 'sprang', v3: 'sprung', t1: '[sprɪŋ]', t2: '[spræŋ]', t3: '[sprʌŋ]', m1: 'прыгать', m2: 'прыгнул', m3: 'прыгнувший' },
+            { v1: 'swim', v2: 'swam', v3: 'swum', t1: '[swɪm]', t2: '[swæm]', t3: '[swʌm]', m1: 'плавать', m2: 'плавал', m3: 'плававший' },
+            
+            // 9. Совсем неправильные (8)
+            { v1: 'be', v2: 'was/were', v3: 'been', t1: '[biː]', t2: '[wɒz / wɜː]', t3: '[biːn]', m1: 'быть', m2: 'был', m3: 'бывший' },
+            { v1: 'do', v2: 'did', v3: 'done', t1: '[duː]', t2: '[dɪd]', t3: '[dʌn]', m1: 'делать', m2: 'сделал', m3: 'сделанный' },
+            { v1: 'go', v2: 'went', v3: 'gone', t1: '[ɡəʊ]', t2: '[went]', t3: '[ɡɒn]', m1: 'идти', m2: 'пошел', m3: 'ушедший' },
+            { v1: 'undergo', v2: 'underwent', v3: 'undergone', t1: '[ˌʌndəˈɡəʊ]', t2: '[ˌʌndəˈwent]', t3: '[ˌʌndəˈɡɒn]', m1: 'подвергаться / проходить', m2: 'подвергся', m3: 'подвергнутый' },
+            { v1: 'undo', v2: 'undid', v3: 'undone', t1: '[ʌnˈduː]', t2: '[ʌnˈdɪd]', t3: '[ʌnˈdʌn]', m1: 'отменять', m2: 'отменил', m3: 'отмененный' },
+            { v1: 'bid', v2: 'bid/bade', v3: 'bid/bidden', t1: '[bɪd]', t2: '[bɪd / bæd]', t3: '[bɪd / ˈbɪdn]', m1: 'предлагать цену', m2: 'предложил цену', m3: 'предложенный' },
+            { v1: 'clothe', v2: 'clad/clothed', v3: 'clad/clothed', t1: '[kləʊð]', t2: '[klæd / kləʊðd]', t3: '[klæd / kləʊðd]', m1: 'одевать', m2: 'одел', m3: 'одетый' },
+            { v1: 'prove', v2: 'proved', v3: 'proved/proven', t1: '[pruːv]', t2: '[pruːvd]', t3: '[pruːvd / ˈpruːvn]', m1: 'доказывать', m2: 'доказал', m3: 'доказанный' },
+            
+            // 10. Глаголы с -N на конце и другие (46)
+            { v1: 'awake', v2: 'awoke', v3: 'awoken', t1: '[əˈweɪk]', t2: '[əˈwəʊk]', t3: '[əˈwəʊkn]', m1: 'просыпаться', m2: 'проснулся', m3: 'проснувшийся' },
+            { v1: 'bear', v2: 'bore', v3: 'borne/born', t1: '[beə]', t2: '[bɔː]', t3: '[bɔːn]', m1: 'выносить / терпеть', m2: 'вытерпел', m3: 'перенесенный' },
+            { v1: 'beget', v2: 'begot', v3: 'begotten', t1: '[bɪˈɡet]', t2: '[bɪˈɡɒt]', t3: '[bɪˈɡɒtn]', m1: 'порождать', m2: 'породил', m3: 'порожденный' },
+            { v1: 'break', v2: 'broke', v3: 'broken', t1: '[breɪk]', t2: '[brəʊk]', t3: '[ˈbrəʊkn]', m1: 'ломать', m2: 'сломал', m3: 'сломанный' },
+            { v1: 'choose', v2: 'chose', v3: 'chosen', t1: '[tʃuːz]', t2: '[tʃəʊz]', t3: '[ˈtʃəʊzn]', m1: 'выбирать', m2: 'выбрал', m3: 'выбранный' },
+            { v1: 'forget', v2: 'forgot', v3: 'forgotten', t1: '[fəˈɡet]', t2: '[fəˈɡɒt]', t3: '[fəˈɡɒtn]', m1: 'забывать', m2: 'забыл', m3: 'забытый' },
+            { v1: 'freeze', v2: 'froze', v3: 'frozen', t1: '[friːz]', t2: '[frəʊz]', t3: '[ˈfrəʊzn]', m1: 'замерзать', m2: 'замерз', m3: 'замороженный' },
+            { v1: 'speak', v2: 'spoke', v3: 'spoken', t1: '[spiːk]', t2: '[spəʊk]', t3: '[ˈspəʊkn]', m1: 'говорить', m2: 'сказал', m3: 'сказанный' },
+            { v1: 'steal', v2: 'stole', v3: 'stolen', t1: '[stiːl]', t2: '[stəʊl]', t3: '[ˈstəʊlən]', m1: 'красть', m2: 'украл', m3: 'украденный' },
+            { v1: 'swear', v2: 'swore', v3: 'sworn', t1: '[sweə]', t2: '[swɔː]', t3: '[swɔːn]', m1: 'клясться', m2: 'поклялся', m3: 'поклявшийся' },
+            { v1: 'tear', v2: 'tore', v3: 'torn', t1: '[teə]', t2: '[tɔː]', t3: '[tɔːn]', m1: 'разрывать', m2: 'разорвал', m3: 'разорванный' },
+            { v1: 'wake', v2: 'woke', v3: 'woken', t1: '[weɪk]', t2: '[wəʊk]', t3: '[ˈwəʊkn]', m1: 'будить', m2: 'разбудил', m3: 'разбуженный' },
+            { v1: 'wear', v2: 'wore', v3: 'worn', t1: '[weə]', t2: '[wɔː]', t3: '[worn]', m1: 'надевать / носить', m2: 'носил', m3: 'изношенный' },
+            
+            { v1: 'arise', v2: 'arose', v3: 'arisen', t1: '[əˈraɪz]', t2: '[əˈrəʊz]', t3: '[əˈrɪzn]', m1: 'возникать', m2: 'возник', m3: 'возникший' },
+            { v1: 'drive', v2: 'drove', v3: 'driven', t1: '[draɪv]', t2: '[drəʊv]', t3: '[ˈdrɪvn]', m1: 'вести машину', m2: 'вел машину', m3: 'ведомый (о машине)' },
+            { v1: 'ride', v2: 'rode', v3: 'ridden', t1: '[raɪd]', t2: '[rəʊd]', t3: '[ˈrɪdn]', m1: 'ездить верхом', m2: 'ездил верхом', m3: 'ездивший верхом' },
+            { v1: 'rise', v2: 'rose', v3: 'risen', t1: '[raɪz]', t2: '[rəʊz]', t3: '[ˈrɪzn]', m1: 'поднимать(ся)', m2: 'поднялся', m3: 'поднявшийся' },
+            { v1: 'stride', v2: 'strode', v3: 'stridden', t1: '[straɪd]', t2: '[strəʊd]', t3: '[ˈstrɪdn]', m1: 'шагать', m2: 'шагнул', m3: 'шагнувший' },
+            { v1: 'strive', v2: 'strove/strived', v3: 'striven/strived', t1: '[straɪv]', t2: '[strəʊv / straɪvd]', t3: '[ˈstrɪvn / straɪvd]', m1: 'стремиться', m2: 'стремился', m3: 'стремившийся' },
+            { v1: 'thrive', v2: 'throve', v3: 'thriven', t1: '[θraɪv]', t2: '[θrəʊv]', t3: '[ˈθrɪvn]', m1: 'процветать', m2: 'процветал', m3: 'процветавший' },
+            { v1: 'write', v2: 'wrote', v3: 'written', t1: '[raɪt]', t2: '[rəʊt]', t3: '[ˈrɪtn]', m1: 'писать', m2: 'написал', m3: 'написанный' },
+            
+            { v1: 'blow', v2: 'blew', v3: 'blown', t1: '[bləʊ]', t2: '[bluː]', t3: '[bləʊn]', m1: 'дуть', m2: 'подул', m3: 'сдутый' },
+            { v1: 'draw', v2: 'drew', v3: 'drawn', t1: '[drɔː]', t2: '[druː]', t3: '[drɔːn]', m1: 'рисовать', m2: 'нарисовал', m3: 'нарисованный' },
+            { v1: 'fly', v2: 'flew', v3: 'flown', t1: '[flaɪ]', t2: '[fluː]', t3: '[fləʊn]', m1: 'летать', m2: 'летал', m3: 'летавший' },
+            { v1: 'grow', v2: 'grew', v3: 'grown', t1: '[ɡrəʊ]', t2: '[ɡruː]', t3: '[ɡrəʊn]', m1: 'расти', m2: 'вырос', m3: 'выращенный' },
+            { v1: 'know', v2: 'knew', v3: 'known', t1: '[nəʊ]', t2: '[njuː]', t3: '[nəʊn]', m1: 'знать', m2: 'знал', m3: 'известный' },
+            { v1: 'throw', v2: 'threw', v3: 'thrown', t1: '[θrəʊ]', t2: '[θruː]', t3: '[θrəʊn]', m1: 'бросать', m2: 'бросил', m3: 'брошенный' },
+            { v1: 'withdraw', v2: 'withdrew', v3: 'withdrawn', t1: '[wɪðˈdrɔː]', t2: '[wɪðˈdruː]', t3: '[wɪðˈdrɔːn]', m1: 'снимать / отзывать', m2: 'отозвал', m3: 'отозванный' },
+            
+            { v1: 'beat', v2: 'beat', v3: 'beaten', t1: '[biːt]', t2: '[biːt]', t3: '[ˈbiːtn]', m1: 'бить', m2: 'бил', m3: 'побитый' },
+            { v1: 'bite', v2: 'bit', v3: 'bitten', t1: '[baɪt]', t2: '[bɪt]', t3: '[ˈbɪtn]', m1: 'кусать', m2: 'укусил', m3: 'укушенный' },
+            { v1: 'eat', v2: 'ate', v3: 'eaten', t1: '[iːt]', t2: '[eɪt]', t3: '[ˈiːtn]', m1: 'есть', m2: 'съел', m3: 'съеденный' },
+            { v1: 'fall', v2: 'fell', v3: 'fallen', t1: '[fɔːl]', t2: '[fel]', t3: '[ˈfɔːlən]', m1: 'падать', m2: 'упал', m3: 'упавший' },
+            { v1: 'forbid', v2: 'forbade', v3: 'forbidden', t1: '[fəˈbɪd]', t2: '[fəˈbæd]', t3: '[fəˈbɪdn]', m1: 'запрещать', m2: 'запретил', m3: 'запрещенный' },
+            { v1: 'foresee', v2: 'foresaw', v3: 'foreseen', t1: '[fɔːˈsiː]', t2: '[fɔːˈsɔː]', t3: '[fɔːˈsiːn]', m1: 'предвидеть', m2: 'предвидел', m3: 'предвиденный' },
+            { v1: 'forgive', v2: 'forgave', v3: 'forgiven', t1: '[fəˈɡɪv]', t2: '[fəˈɡeɪv]', t3: '[fəˈɡɪvn]', m1: 'прощать', m2: 'простил', m3: 'прощенный' },
+            { v1: 'give', v2: 'gave', v3: 'given', t1: '[ɡɪv]', t2: '[ɡeɪv]', t3: '[ˈɡɪvn]', m1: 'давать', m2: 'дал', m3: 'данный' },
+            { v1: 'hide', v2: 'hid', v3: 'hidden', t1: '[haɪd]', t2: '[hɪd]', t3: '[ˈhɪdn]', m1: 'прятать', m2: 'спрятал', m3: 'спрятанный' },
+            { v1: 'lie', v2: 'lay', v3: 'lain', t1: '[laɪ]', t2: '[leɪ]', t3: '[leɪn]', m1: 'лежать', m2: 'лежал', m3: 'лежавший' },
+            { v1: 'mistake', v2: 'mistook', v3: 'mistaken', t1: '[mɪˈsteɪk]', t2: '[mɪˈstʊk]', t3: '[mɪˈsteɪkn]', m1: 'ошибаться', m2: 'ошибся', m3: 'ошибочный' },
+            { v1: 'overtake', v2: 'overtook', v3: 'overtaken', t1: '[ˌəʊvəˈteɪk]', t2: '[ˌəʊvəˈtʊk]', t3: '[ˌəʊvəˈteɪkn]', m1: 'обгонять', m2: 'обогнал', m3: 'обогнанный' },
+            { v1: 'see', v2: 'saw', v3: 'seen', t1: '[siː]', t2: '[sɔː]', t3: '[siːn]', m1: 'видеть', m2: 'увидел', m3: 'увиденный' },
+            { v1: 'shake', v2: 'shook', v3: 'shaken', t1: '[ʃeɪk]', t2: '[ʃʊk]', t3: '[ˈʃeɪkn]', m1: 'трясти', m2: 'потряс', m3: 'потрясенный' },
+            { v1: 'show', v2: 'showed', v3: 'shown', t1: '[ʃəʊ]', t2: '[ʃəʊd]', t3: '[ʃəʊn]', m1: 'показывать', m2: 'показал', m3: 'показанный' },
+            { v1: 'take', v2: 'took', v3: 'taken', t1: '[teɪk]', t2: '[tʊk]', t3: '[ˈteɪkn]', m1: 'брать', m2: 'взял', m3: 'взятый' },
+            { v1: 'undertake', v2: 'undertook', v3: 'undertaken', t1: '[ˌʌndəˈteɪk]', t2: '[ˌʌndəˈtʊk]', t3: '[ˌʌndəˈteɪkn]', m1: 'предпринимать', m2: 'предпринял', m3: 'предпринятый' },
+            { v1: 'swell', v2: 'swelled', v3: 'swelled/swollen', t1: '[swel]', t2: '[sweld]', t3: '[sweld / ˈswəʊlən]', m1: 'распухать / отекать', m2: 'распух', m3: 'распухший' }
+        ];
+
+        const verbGroups = [
+            {
+                id: '1',
+                num: 1,
+                title: 'Все три формы совпадают',
+                shortTitle: '1. Все 3 формы совпадают',
+                count: 23,
+                pattern: 'cost → cost → cost',
+                desc: 'Глаголы не изменяются: одинаковая форма в инфинитиве (V1), прошедшем времени (V2) и причастии (V3).',
+                color: 'emerald'
+            },
+            {
+                id: '2',
+                num: 2,
+                title: 'Совпадают 1-я и 3-я формы',
+                shortTitle: '2. 1-я = 3-я форма',
+                count: 4,
+                pattern: 'come → came → come',
+                desc: 'Инфинитив (V1) и причастие (V3) одинаковы, а прошедшее время (V2) отличается гласной.',
+                color: 'teal'
+            },
+            {
+                id: '3',
+                num: 3,
+                title: 'Совпадают 2-я и 3-я формы',
+                shortTitle: '3. 2-я = 3-я форма',
+                count: 61,
+                pattern: 'build → built → built',
+                desc: 'Формы Past Simple (V2) и Participle II (V3) полностью совпадают между собой. Самая многочисленная группа.',
+                color: 'indigo'
+            },
+            {
+                id: '4',
+                num: 4,
+                title: 'Меняется произношение EA в корне',
+                shortTitle: '4. Чтение EA [iː] → [e]',
+                count: 6,
+                pattern: 'read [riːd] → read [red] → read [red]',
+                desc: 'Буквосочетание «ea» в Past Simple и Participle II произносится кратко как [e].',
+                color: 'violet'
+            },
+            {
+                id: '5',
+                num: 5,
+                title: 'В корне I меняется на OU',
+                shortTitle: '5. В корне I → OU',
+                count: 4,
+                pattern: 'find → found → found',
+                desc: 'Корневая гласная «i» меняется на дифтонг «ou» [aʊ] во 2-й и 3-й формах.',
+                color: 'amber'
+            },
+            {
+                id: '6',
+                num: 6,
+                title: 'В корне ELL превращается в OLD',
+                shortTitle: '6. ELL → OLD',
+                count: 3,
+                pattern: 'tell → told → told',
+                desc: 'Окончание «ell» превращается в «old» во 2-й и 3-й формах.',
+                color: 'orange'
+            },
+            {
+                id: '7',
+                num: 7,
+                title: 'Оканчиваются на -ought или -aught',
+                shortTitle: '7. Окончание -ought / -aught',
+                count: 7,
+                pattern: 'buy → bought → bought',
+                desc: 'Вторая и третья формы получают одинаковое окончание -ought или -aught [-ɔːt].',
+                color: 'rose'
+            },
+            {
+                id: '8',
+                num: 8,
+                title: 'Происходит чередование I - A - U',
+                shortTitle: '8. Чередование I - A - U',
+                count: 8,
+                pattern: 'sing → sang → sung',
+                desc: 'Классическое тройное чередование гласных звуков: i [ɪ] → a [æ] → u [ʌ].',
+                color: 'sky'
+            },
+            {
+                id: '9',
+                num: 9,
+                title: 'Совсем неправильные',
+                shortTitle: '9. Совсем неправильные',
+                count: 8,
+                pattern: 'go → went → gone',
+                desc: 'Глаголы с особыми историческими формами изменения корня (супплетивизм).',
+                color: 'fuchsia'
+            },
+            {
+                id: '10',
+                num: 10,
+                title: 'Глаголы с -N на конце',
+                shortTitle: '10. Окончание -N в V3',
+                count: 46,
+                pattern: 'write → wrote → written',
+                desc: 'Третья форма (Participle II) оканчивается на «-n» или «-en». Включает 4 характерные подгруппы.',
+                color: 'blue',
+                subgroups: [
+                    { id: '10.1', title: 'Во 2-й и 3-й формах O', count: 13, pattern: 'break → broke → broken' },
+                    { id: '10.2', title: 'Только во 2-й форме O', count: 8, pattern: 'drive → drove → driven' },
+                    { id: '10.3', title: 'Появляются -EW и -OWN', count: 7, pattern: 'blow → blew → blown' },
+                    { id: '10.4', title: 'Другие случаи с окончанием -N', count: 18, pattern: 'eat → ate → eaten' }
+                ]
+            }
+        ];
+
+        // Привязываем каждый глагол к своей группе на основе структуры паттернов
+        rawVerbs.forEach((verb, idx) => {
+            let groupId = '1';
+            let subgroupId = null;
+            if (idx < 23) groupId = '1';
+            else if (idx < 27) groupId = '2';
+            else if (idx < 88) groupId = '3';
+            else if (idx < 94) groupId = '4';
+            else if (idx < 98) groupId = '5';
+            else if (idx < 101) groupId = '6';
+            else if (idx < 108) groupId = '7';
+            else if (idx < 116) groupId = '8';
+            else if (idx < 124) groupId = '9';
+            else {
+                groupId = '10';
+                if (idx < 137) subgroupId = '10.1';
+                else if (idx < 145) subgroupId = '10.2';
+                else if (idx < 152) subgroupId = '10.3';
+                else subgroupId = '10.4';
+            }
+            verb.groupId = groupId;
+            verb.subgroupId = subgroupId;
+            const gMeta = verbGroups.find(g => g.id === groupId);
+            verb.groupTitle = gMeta ? gMeta.title : `Группа ${groupId}`;
+        });
+
+        let allCards = [];
+        rawVerbs.forEach((verb, idx) => {
+            const verbKey = `${verb.v1}_${verb.v2}_${idx}`;
+            allCards.push({ id: `${verbKey}_V1`, frontText: verb.m1, form: 'V1', backText: verb.v1, transcription: verb.t1, verb, groupId: verb.groupId, subgroupId: verb.subgroupId, groupTitle: verb.groupTitle });
+            allCards.push({ id: `${verbKey}_V2`, frontText: verb.m2, form: 'V2', backText: verb.v2, transcription: verb.t2, verb, groupId: verb.groupId, subgroupId: verb.subgroupId, groupTitle: verb.groupTitle });
+            allCards.push({ id: `${verbKey}_V3`, frontText: verb.m3, form: 'V3', backText: verb.v3, transcription: verb.t3, verb, groupId: verb.groupId, subgroupId: verb.subgroupId, groupTitle: verb.groupTitle });
+        });
+
+        const STATS_KEY = 'irregular_verbs_stats_v1';
+
+        function loadStats() {
+            try {
+                const stored = localStorage.getItem(STATS_KEY);
+                return stored ? JSON.parse(stored) : {};
+            } catch (e) {
+                console.warn('Storage unavailable, using in-memory stats:', e);
+                return {};
+            }
+        }
+
+        function saveStats() {
+            try {
+                localStorage.setItem(STATS_KEY, JSON.stringify(cardStats));
+            } catch (e) {
+                console.warn('Could not save stats to storage:', e);
+            }
+        }
+
+        let cardStats = loadStats();
+        let currentMode = 'seq'; // 'seq' | 'rand' | 'hard'
+        let currentGroupFilter = 'all'; // 'all' | '1'..'10' | '10.1'..'10.4'
+        let currentView = 'cards'; // 'cards' | 'groups'
+        let currentIndex = 0;
+        let currentCards = [...allCards]; 
+        let isFlipped = false;
+        let isAnimating = false; 
+        let currentCardMistakeRecorded = false;
+
+        // Элементы навигации и разделов
+        const navTabCards = document.getElementById('navTabCards');
+        const navTabGroups = document.getElementById('navTabGroups');
+        const btnLogoHome = document.getElementById('btnLogoHome');
+        const sectionCards = document.getElementById('sectionCards');
+        const sectionGroups = document.getElementById('sectionGroups');
+        const cardsModeControls = document.getElementById('cardsModeControls');
+        const progressBarContainer = document.getElementById('progressBarContainer');
+
+        const groupSelect = document.getElementById('groupSelect');
+        const btnOpenGroupsCatalog = document.getElementById('btnOpenGroupsCatalog');
+        const frontGroupHint = document.getElementById('frontGroupHint');
+        const backGroupHint = document.getElementById('backGroupHint');
+        const btnPronounce = document.getElementById('btnPronounce');
+
+        // Карточки
+        const flashcard = document.getElementById('flashcard');
+        const cardContainer = document.getElementById('cardContainer');
+        const frontHint = document.getElementById('frontHint');
+        const frontBadge = document.getElementById('frontBadge');
+        const backBadge = document.getElementById('backBadge');
+        const cardFrontText = document.getElementById('cardFrontText');
+        const cardBackText = document.getElementById('cardBackText');
+        const cardBackTranscription = document.getElementById('cardBackTranscription');
+        
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const btnRestart = document.getElementById('btnRestart');
+        const btnResetStats = document.getElementById('btnResetStats');
+        const btnWrong = document.getElementById('btnWrong');
+        const btnCorrect = document.getElementById('btnCorrect');
+
+        const btnModeSeq = document.getElementById('btnModeSeq');
+        const btnModeRand = document.getElementById('btnModeRand');
+        const btnModeHard = document.getElementById('btnModeHard');
+        const hardCount = document.getElementById('hardCount');
+        const mistakesCounterBadge = document.getElementById('mistakesCounterBadge');
+        const mistakesCountText = document.getElementById('mistakesCountText');
+        
+        const cardCounter = document.getElementById('cardCounter');
+        const progressBar = document.getElementById('progressBar');
+
+        const toast = document.getElementById('toast');
+        const toastContent = document.getElementById('toastContent');
+        let toastTimeout = null;
+
+        const completionModal = document.getElementById('completionModal');
+        const completionStatsText = document.getElementById('completionStatsText');
+        const btnModalRestart = document.getElementById('btnModalRestart');
+        const btnModalHard = document.getElementById('btnModalHard');
+        const btnModalClose = document.getElementById('btnModalClose');
+
+        // Элементы раздела Групп
+        const groupsCardsContainer = document.getElementById('groupsCardsContainer');
+        const verbSearchInput = document.getElementById('verbSearchInput');
+        const btnStartOverallQuiz = document.getElementById('btnStartOverallQuiz');
+
+        // Элементы теста / викторины
+        const quizModal = document.getElementById('quizModal');
+        const btnQuizClose = document.getElementById('btnQuizClose');
+        const quizGroupBadge = document.getElementById('quizGroupBadge');
+        const quizTitle = document.getElementById('quizTitle');
+        const quizProgressBar = document.getElementById('quizProgressBar');
+        const quizQuestionCounter = document.getElementById('quizQuestionCounter');
+        const quizVerbPrompt = document.getElementById('quizVerbPrompt');
+        const quizMeaningPrompt = document.getElementById('quizMeaningPrompt');
+        const quizOptionsContainer = document.getElementById('quizOptionsContainer');
+        const quizFeedback = document.getElementById('quizFeedback');
+        const quizQuestionBody = document.getElementById('quizQuestionBody');
+        const quizResultsBody = document.getElementById('quizResultsBody');
+        const quizScoreText = document.getElementById('quizScoreText');
+        const quizMistakesList = document.getElementById('quizMistakesList');
+        const btnQuizRestart = document.getElementById('btnQuizRestart');
+        const btnQuizTrainCards = document.getElementById('btnQuizTrainCards');
+        const btnQuizNext = document.getElementById('btnQuizNext');
+        const quizFooter = document.getElementById('quizFooter');
+
+        // Произношение (Web Speech API)
+        function speakWord(text) {
+            if (!('speechSynthesis' in window)) return;
+            try {
+                window.speechSynthesis.cancel();
+                const cleanWord = text.split('/')[0].trim();
+                const utterance = new SpeechSynthesisUtterance(cleanWord);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                console.warn('Speech synthesis error:', e);
+            }
+        }
+
+        function showToast(msg, type = 'info') {
+            if (!toast || !toastContent) return;
+            clearTimeout(toastTimeout);
+            
+            toastContent.textContent = msg;
+            toastContent.className = 'px-4 py-2 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 border';
+            
+            if (type === 'wrong') {
+                toastContent.classList.add('bg-rose-900/90', 'text-white', 'border-rose-700');
+            } else if (type === 'correct') {
+                toastContent.classList.add('bg-emerald-900/90', 'text-white', 'border-emerald-700');
+            } else {
+                toastContent.classList.add('bg-slate-900/90', 'text-white', 'border-slate-700');
+            }
+
+            toast.classList.remove('opacity-0', '-translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-2');
+            }, 2300);
+        }
+
+        // Фильтрация карточек по выбранной группе
+        function getFilteredBaseCards() {
+            if (currentGroupFilter === 'all') return allCards;
+            if (currentGroupFilter.startsWith('10.')) {
+                return allCards.filter(c => c.subgroupId === currentGroupFilter);
+            }
+            return allCards.filter(c => c.groupId === currentGroupFilter);
+        }
+
+        function getHardCardsCount(pool = allCards) {
+            return pool.filter(c => {
+                const s = cardStats[c.id];
+                return s && (s.mistakes > 0 || (s.weight && s.weight > 1));
+            }).length;
+        }
+
+        function updateStatsUI() {
+            const count = getHardCardsCount();
+            if (count > 0) {
+                mistakesCounterBadge.classList.remove('hidden');
+                mistakesCounterBadge.classList.add('flex');
+                mistakesCountText.textContent = `${count} на повтор`;
+
+                btnModeHard.classList.remove('hidden');
+                hardCount.textContent = count;
+            } else {
+                mistakesCounterBadge.classList.add('hidden');
+                mistakesCounterBadge.classList.remove('flex');
+                btnModeHard.classList.add('hidden');
+            }
+        }
+
+        function renderCard() {
+            currentCardMistakeRecorded = false;
+            const card = currentCards[currentIndex];
+            if (!card) return;
+
+            frontHint.textContent = card.form;
+            const groupMeta = verbGroups.find(g => g.id === card.groupId);
+            const groupName = groupMeta ? `Гр. ${groupMeta.num}` : '';
+            frontGroupHint.textContent = groupName;
+            backGroupHint.textContent = groupName;
+
+            cardFrontText.textContent = card.frontText;
+            cardBackText.textContent = card.backText;
+            if (cardBackTranscription) {
+                cardBackTranscription.textContent = card.transcription || '';
+            }
+            
+            const stats = cardStats[card.id] || { mistakes: 0, weight: 1 };
+            const isHard = stats.mistakes > 0 || (stats.weight && stats.weight > 1);
+
+            if (isHard && currentMode !== 'seq') {
+                const badgeText = stats.mistakes > 0 
+                    ? `⚠️ Ошибок: ${stats.mistakes}` 
+                    : `⚡ Повышенный вес`;
+                frontBadge.textContent = badgeText;
+                backBadge.textContent = badgeText;
+                frontBadge.classList.remove('hidden');
+                frontBadge.classList.add('flex');
+                backBadge.classList.remove('hidden');
+                backBadge.classList.add('flex');
+            } else {
+                frontBadge.classList.add('hidden');
+                frontBadge.classList.remove('flex');
+                backBadge.classList.add('hidden');
+                backBadge.classList.remove('flex');
+            }
+
+            cardCounter.textContent = `${currentIndex + 1} / ${currentCards.length}`;
+            progressBar.style.width = `${((currentIndex + 1) / currentCards.length) * 100}%`;
+
+            btnPrev.disabled = currentIndex === 0;
+            btnNext.disabled = currentIndex === currentCards.length - 1;
+        }
+
+        function flipCard() {
+            if (isAnimating) return;
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                flashcard.classList.add('is-flipped');
+            } else {
+                flashcard.classList.remove('is-flipped');
+            }
+        }
+
+        function changeCard(newIndex) {
+            if (isAnimating || newIndex < 0 || newIndex >= currentCards.length) return;
+            isAnimating = true;
+            
+            cardContainer.classList.add('fade-out');
+            
+            setTimeout(() => {
+                currentIndex = newIndex;
+                isFlipped = false;
+                flashcard.classList.remove('is-flipped');
+                
+                setTimeout(() => {
+                    renderCard();
+                    cardContainer.classList.remove('fade-out');
+                    isAnimating = false;
+                }, 150);
+                
+            }, 200);
+        }
+
+        function getRussianStepWord(n) {
+            if (n === 1) return 'шаг';
+            if (n >= 2 && n <= 4) return 'шага';
+            return 'шагов';
+        }
+
+        function scheduleCardRepetition(card) {
+            const minGap = 3;
+            const maxGap = 5;
+            const gap = Math.floor(Math.random() * (maxGap - minGap + 1)) + minGap;
+            const targetIndex = Math.min(currentIndex + gap, currentCards.length);
+            
+            currentCards.splice(targetIndex, 0, card);
+            
+            const stepsAhead = targetIndex - currentIndex;
+            showToast(`✕ Ошибка! Карточка вернется через ${stepsAhead} ${getRussianStepWord(stepsAhead)}`, 'wrong');
+        }
+
+        function handleAnswer(isCorrect) {
+            if (isAnimating) return;
+            const card = currentCards[currentIndex];
+            if (!card) return;
+
+            if (!isFlipped && !isCorrect) {
+                flipCard();
+                if (!currentCardMistakeRecorded) {
+                    currentCardMistakeRecorded = true;
+                    if (!cardStats[card.id]) {
+                        cardStats[card.id] = { mistakes: 0, correct: 0, weight: 1 };
+                    }
+                    cardStats[card.id].mistakes++;
+                    cardStats[card.id].weight = Math.min(8, (cardStats[card.id].weight || 1) + 2);
+                    saveStats();
+                    updateStatsUI();
+
+                    if (currentMode !== 'seq') {
+                        scheduleCardRepetition(card);
+                    } else {
+                        showToast(`✕ Запомните форму. Нажмите «Не знаю» еще раз или [→] для перехода`, 'wrong');
+                    }
+                }
+                return;
+            }
+
+            if (!cardStats[card.id]) {
+                cardStats[card.id] = { mistakes: 0, correct: 0, weight: 1 };
+            }
+
+            if (isCorrect) {
+                cardStats[card.id].correct++;
+                if (cardStats[card.id].weight > 1) {
+                    cardStats[card.id].weight = Math.max(1, cardStats[card.id].weight - 1);
+                }
+                showToast('✓ Отлично! Запомнили', 'correct');
+            } else {
+                if (!currentCardMistakeRecorded) {
+                    currentCardMistakeRecorded = true;
+                    cardStats[card.id].mistakes++;
+                    cardStats[card.id].weight = Math.min(8, (cardStats[card.id].weight || 1) + 2);
+                    if (currentMode !== 'seq') {
+                        scheduleCardRepetition(card);
+                    } else {
+                        showToast('✕ Ошибка записана', 'wrong');
+                    }
+                }
+            }
+
+            saveStats();
+            updateStatsUI();
+
+            if (currentIndex < currentCards.length - 1) {
+                changeCard(currentIndex + 1);
+            } else {
+                showCompletionModal();
+            }
+        }
+
+        function generateRandomDeck(cards) {
+            let pool = [];
+            
+            cards.forEach(card => {
+                const stats = cardStats[card.id];
+                const weight = stats && stats.weight ? Math.min(4, Math.max(1, Math.round(stats.weight))) : 1;
+                for (let i = 0; i < weight; i++) {
+                    pool.push(card);
+                }
+            });
+
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+
+            for (let i = 1; i < pool.length; i++) {
+                if (pool[i].id === pool[i - 1].id) {
+                    for (let j = i + 1; j < pool.length; j++) {
+                        if (pool[j].id !== pool[i - 1].id && (j === pool.length - 1 || pool[j].id !== pool[i + 1]?.id)) {
+                            [pool[i], pool[j]] = [pool[j], pool[i]];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return pool;
+        }
+
+        function updateModeButtons() {
+            [btnModeSeq, btnModeRand, btnModeHard].forEach(btn => {
+                btn.classList.remove('bg-white', 'shadow-sm', 'text-slate-800');
+                btn.classList.add('text-slate-500', 'hover:text-slate-700');
+            });
+
+            if (currentMode === 'seq') {
+                btnModeSeq.classList.add('bg-white', 'shadow-sm', 'text-slate-800');
+                btnModeSeq.classList.remove('text-slate-500', 'hover:text-slate-700');
+            } else if (currentMode === 'rand') {
+                btnModeRand.classList.add('bg-white', 'shadow-sm', 'text-slate-800');
+                btnModeRand.classList.remove('text-slate-500', 'hover:text-slate-700');
+            } else if (currentMode === 'hard') {
+                btnModeHard.classList.add('bg-white', 'shadow-sm', 'text-slate-800');
+                btnModeHard.classList.remove('text-slate-500', 'hover:text-slate-700');
+            }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            updateModeButtons();
+            const baseCards = getFilteredBaseCards();
+
+            if (mode === 'seq') {
+                currentCards = [...baseCards];
+                showToast('Режим: По порядку');
+            } else if (mode === 'rand') {
+                currentCards = generateRandomDeck(baseCards);
+                showToast('Режим: Случайный с адаптивным повторением');
+            } else if (mode === 'hard') {
+                const hardCards = baseCards.filter(c => {
+                    const s = cardStats[c.id];
+                    return s && (s.mistakes > 0 || (s.weight && s.weight > 1));
+                });
+                if (hardCards.length > 0) {
+                    currentCards = generateRandomDeck(hardCards);
+                    showToast(`Режим: Сложные карточки (${hardCards.length})`);
+                } else {
+                    currentMode = 'rand';
+                    updateModeButtons();
+                    currentCards = generateRandomDeck(baseCards);
+                    showToast('Сложных карточек пока нет! Случайный режим');
+                }
+            }
+            changeCard(0);
+        }
+
+        function restartDeck() {
+            btnRestart.classList.add('text-indigo-600', 'bg-indigo-50');
+            setTimeout(() => btnRestart.classList.remove('text-indigo-600', 'bg-indigo-50'), 300);
+            
+            const baseCards = getFilteredBaseCards();
+            if (currentMode === 'seq') {
+                currentCards = [...baseCards];
+            } else if (currentMode === 'hard') {
+                const hardCards = baseCards.filter(c => {
+                    const s = cardStats[c.id];
+                    return s && (s.mistakes > 0 || (s.weight && s.weight > 1));
+                });
+                currentCards = generateRandomDeck(hardCards.length > 0 ? hardCards : baseCards);
+            } else {
+                currentCards = generateRandomDeck(baseCards);
+            }
+            changeCard(0);
+            showToast('Колода перемешана и начата заново');
+        }
+
+        function resetAllStats() {
+            if (confirm('Сбросить всю историю ошибок и весов карточек? Все карточки снова будут выпадать с одинаковой частотой.')) {
+                cardStats = {};
+                saveStats();
+                updateStatsUI();
+                renderGroupsHub(verbSearchInput ? verbSearchInput.value : '');
+                restartDeck();
+                showToast('Статистика ошибок успешно сброшена');
+            }
+        }
+
+        function showCompletionModal() {
+            const hardCountNum = getHardCardsCount(getFilteredBaseCards());
+            completionStatsText.textContent = `Вы просмотрели всю текущую выборку (${currentCards.length} карточек). Карточек с ошибками для повторения: ${hardCountNum}.`;
+            
+            if (hardCountNum > 0) {
+                btnModalHard.classList.remove('hidden');
+                btnModalHard.textContent = `Тренировать сложные (${hardCountNum})`;
+            } else {
+                btnModalHard.classList.add('hidden');
+            }
+
+            completionModal.classList.remove('hidden');
+        }
+
+        function hideCompletionModal() {
+            completionModal.classList.add('hidden');
+        }
+
+        // Переключение между вкладками: Карточки и Группы глаголов
+        function switchView(viewName) {
+            currentView = viewName;
+            if (viewName === 'cards') {
+                navTabCards.classList.add('bg-white', 'shadow-sm', 'text-slate-800');
+                navTabCards.classList.remove('text-slate-500', 'hover:text-slate-800');
+                navTabGroups.classList.remove('bg-white', 'shadow-sm', 'text-slate-800');
+                navTabGroups.classList.add('text-slate-500', 'hover:text-slate-800');
+
+                sectionCards.classList.remove('hidden');
+                sectionCards.classList.add('flex');
+                sectionGroups.classList.add('hidden');
+                sectionGroups.classList.remove('flex');
+                cardsModeControls.classList.remove('hidden');
+                progressBarContainer.classList.remove('hidden');
+                renderCard();
+            } else {
+                navTabGroups.classList.add('bg-white', 'shadow-sm', 'text-slate-800');
+                navTabGroups.classList.remove('text-slate-500', 'hover:text-slate-800');
+                navTabCards.classList.remove('bg-white', 'shadow-sm', 'text-slate-800');
+                navTabCards.classList.add('text-slate-500', 'hover:text-slate-800');
+
+                sectionGroups.classList.remove('hidden');
+                sectionGroups.classList.add('flex');
+                sectionCards.classList.add('hidden');
+                sectionCards.classList.remove('flex');
+                cardsModeControls.classList.add('hidden');
+                progressBarContainer.classList.add('hidden');
+                renderGroupsHub(verbSearchInput ? verbSearchInput.value : '');
+            }
+        }
+
+        function startGroupPractice(groupId, mode = 'rand') {
+            currentGroupFilter = groupId;
+            groupSelect.value = groupId;
+            switchView('cards');
+            setMode(mode);
+            const groupMeta = verbGroups.find(g => g.id === groupId);
+            const title = groupMeta ? groupMeta.title : `Группа ${groupId}`;
+            showToast(`Тренировка: ${title} (${mode === 'rand' ? 'Случайно' : 'По порядку'})`);
+        }
+
+        // Рендеринг каталога групп
+        function renderGroupsHub(searchTerm = '') {
+            if (!groupsCardsContainer) return;
+            const term = searchTerm.trim().toLowerCase();
+            groupsCardsContainer.innerHTML = '';
+
+            verbGroups.forEach(group => {
+                let verbsInGroup = rawVerbs.filter(v => v.groupId === group.id);
+                if (term) {
+                    verbsInGroup = verbsInGroup.filter(v => 
+                        v.v1.toLowerCase().includes(term) ||
+                        v.v2.toLowerCase().includes(term) ||
+                        v.v3.toLowerCase().includes(term) ||
+                        v.m1.toLowerCase().includes(term) ||
+                        v.m2.toLowerCase().includes(term) ||
+                        v.m3.toLowerCase().includes(term)
+                    );
+                    if (verbsInGroup.length === 0) return; // Скрыть группу, если ничего не найдено
+                }
+
+                // Расчет статистики для группы
+                let groupErrors = 0;
+                let groupLearned = 0;
+                rawVerbs.filter(v => v.groupId === group.id).forEach((v, vIdx) => {
+                    const k = `${v.v1}_${v.v2}_${rawVerbs.indexOf(v)}`;
+                    ['V1', 'V2', 'V3'].forEach(f => {
+                        const s = cardStats[`${k}_${f}`];
+                        if (s && s.mistakes > 0) groupErrors += s.mistakes;
+                        if (s && s.correct > 0 && (!s.weight || s.weight === 1)) groupLearned++;
+                    });
+                });
+
+                const groupCardEl = document.createElement('div');
+                groupCardEl.className = 'w-full bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all overflow-hidden';
+                
+                let subgroupsHtml = '';
+                if (group.subgroups) {
+                    subgroupsHtml = `
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-2 items-center text-xs">
+                            <span class="text-slate-400 font-semibold uppercase tracking-wider">Подгруппы:</span>
+                            ${group.subgroups.map(sg => `
+                                <button onclick="startGroupPractice('${sg.id}', 'rand')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-medium transition-colors" title="Тренировать подгруппу ${sg.id}">
+                                    ${sg.id}: ${sg.title} (${sg.count})
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                const tableRows = verbsInGroup.map(v => {
+                    return `
+                        <tr class="border-b border-slate-100 hover:bg-slate-50/70 transition-colors">
+                            <td class="py-2.5 px-3">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                    <div class="flex items-center gap-1.5 font-bold text-slate-800">
+                                        <span>${v.v1}</span>
+                                        <button onclick="speakWord('${v.v1}')" class="text-slate-300 hover:text-indigo-600 p-0.5" title="Послушать произношение">🔊</button>
+                                    </div>
+                                    <span class="text-xs font-mono text-slate-400 font-normal">${v.t1}</span>
+                                </div>
+                            </td>
+                            <td class="py-2.5 px-3">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                    <div class="flex items-center gap-1.5 font-bold text-indigo-700">
+                                        <span>${v.v2}</span>
+                                        <button onclick="speakWord('${v.v2}')" class="text-slate-300 hover:text-indigo-600 p-0.5" title="Послушать произношение">🔊</button>
+                                    </div>
+                                    <span class="text-xs font-mono text-indigo-400 font-normal">${v.t2}</span>
+                                </div>
+                            </td>
+                            <td class="py-2.5 px-3">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                    <div class="flex items-center gap-1.5 font-bold text-purple-700">
+                                        <span>${v.v3}</span>
+                                        <button onclick="speakWord('${v.v3}')" class="text-slate-300 hover:text-indigo-600 p-0.5" title="Послушать произношение">🔊</button>
+                                    </div>
+                                    <span class="text-xs font-mono text-purple-400 font-normal">${v.t3}</span>
+                                </div>
+                            </td>
+                            <td class="py-2.5 px-3 text-slate-600 text-xs sm:text-sm">${v.m1}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                groupCardEl.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
+                            <div class="flex items-start sm:items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white font-extrabold flex items-center justify-center text-lg shadow-sm shrink-0">
+                                    ${group.num}
+                                </div>
+                                <div>
+                                    <div class="flex items-center flex-wrap gap-2">
+                                        <h3 class="text-xl font-bold text-slate-900">${group.title}</h3>
+                                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                                            ${group.count} глаголов
+                                        </span>
+                                        ${groupErrors > 0 ? `<span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200">⚠️ ${groupErrors} ошибок</span>` : ''}
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-slate-500 mt-1">${group.desc}</p>
+                                </div>
+                            </div>
+
+                            <!-- Быстрые действия для группы -->
+                            <div class="flex flex-wrap items-center gap-2 self-start sm:self-center">
+                                <button onclick="startGroupPractice('${group.id}', 'rand')" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5 active:scale-95">
+                                    <span>🎲 Карточки</span>
+                                </button>
+                                <button onclick="startQuiz('${group.id}')" class="px-3 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold transition-all flex items-center gap-1 active:scale-95">
+                                    <span>📝 Тест</span>
+                                </button>
+                                <button onclick="toggleGroupTable('tableGroup_${group.id}', this)" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all flex items-center gap-1">
+                                    <span>Список (${verbsInGroup.length})</span>
+                                    <span class="chevron">▼</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Паттерн изменения -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono font-semibold text-indigo-900 mt-1">
+                            <span class="text-slate-400 font-sans font-normal">Паттерн:</span>
+                            <span>${group.pattern}</span>
+                        </div>
+
+                        ${subgroupsHtml}
+                    </div>
+
+                    <!-- Таблица глаголов группы (раскрывающийся аккордеон) -->
+                    <div id="tableGroup_${group.id}" class="${term ? '' : 'hidden'} border-t border-slate-100 bg-slate-50/50 p-4 sm:p-6 transition-all">
+                        <div class="overflow-x-auto bg-white rounded-2xl border border-slate-200 shadow-inner">
+                            <table class="w-full text-left text-xs sm:text-sm">
+                                <thead>
+                                    <tr class="bg-slate-100/70 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
+                                        <th class="py-2.5 px-3">V1 (Base Form)</th>
+                                        <th class="py-2.5 px-3">V2 (Past Simple)</th>
+                                        <th class="py-2.5 px-3">V3 (Participle II)</th>
+                                        <th class="py-2.5 px-3">Перевод</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+                groupsCardsContainer.appendChild(groupCardEl);
+            });
+        }
+
+        window.toggleGroupTable = function(tableId, btn) {
+            const tableEl = document.getElementById(tableId);
+            if (!tableEl) return;
+            const isHidden = tableEl.classList.contains('hidden');
+            if (isHidden) {
+                tableEl.classList.remove('hidden');
+                if (btn) {
+                    const ch = btn.querySelector('.chevron');
+                    if (ch) ch.textContent = '▲';
+                }
+            } else {
+                tableEl.classList.add('hidden');
+                if (btn) {
+                    const ch = btn.querySelector('.chevron');
+                    if (ch) ch.textContent = '▼';
+                }
+            }
+        };
+
+        window.startGroupPractice = startGroupPractice;
+
+        // ДВИЖОК ИНТЕРАКТИВНОГО ТЕСТА (САМОПРОВЕРКА)
+        let currentQuizQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let quizMistakes = [];
+
+        function makeRegularEnding(word) {
+            if (!word) return '';
+            const base = word.split('/')[0].trim().toLowerCase();
+            if (base.endsWith('e')) {
+                return base + 'd';
+            }
+            if (/[^aeiou]y$/i.test(base)) {
+                return base.slice(0, -1) + 'ied';
+            }
+            if (/[^aeiou][aeiou][^aeiouwxy]$/i.test(base) && base.length <= 4) {
+                return base + base[base.length - 1] + 'ed';
+            }
+            return base + 'ed';
+        }
+
+        function generateQuizOptions(verb) {
+            const correctAnswer = `${verb.v2} / ${verb.v3}`;
+            const v1 = verb.v1.split('/')[0].trim();
+            const v2 = verb.v2.split('/')[0].trim();
+            const v3 = verb.v3.split('/')[0].trim();
+            const correctSimple = `${v2} / ${v3}`;
+
+            const ed = makeRegularEnding(v1);
+            const candidates = [];
+
+            // 1. Классическая ошибка: регулярное окончание (-ed / -ed)
+            candidates.push(`${ed} / ${ed}`);
+
+            // 2. Если V2 != V3 (напр. take -> took / taken)
+            if (v2 !== v3) {
+                candidates.push(`${v2} / ${v2}`);     // Ошибка: одинаковые V2 и V3 (took / took)
+                candidates.push(`${v3} / ${v2}`);     // Ошибка: перепутаны местами (taken / took)
+                candidates.push(`${v3} / ${v3}`);     // Ошибка: V2 взята из V3 (taken / taken)
+                candidates.push(`${v2} / ${ed}`);     // Ошибка: V3 с окончанием -ed (took / taked)
+                candidates.push(`${v1} / ${v3}`);     // Ошибка: V2 не изменена (take / taken)
+                candidates.push(`${v2} / ${v1}`);     // Ошибка: V3 не изменена (took / take)
+            } 
+            // 3. Если V2 == V3, но != V1 (напр. mean -> meant / meant)
+            else if (v2 !== v1) {
+                candidates.push(`${v2} / ${ed}`);     // meant / meaned
+                candidates.push(`${ed} / ${v3}`);     // meaned / meant
+                candidates.push(`${v1} / ${v2}`);     // mean / meant
+                candidates.push(`${v2} / ${v1}`);     // meant / mean
+                const enForm = v3.endsWith('e') ? v3 + 'n' : v3 + 'en';
+                const baseEnForm = v1.endsWith('e') ? v1 + 'n' : v1 + 'en';
+                if (!v3.endsWith('en')) {
+                    candidates.push(`${v2} / ${enForm}`);
+                    candidates.push(`${v2} / ${baseEnForm}`);
+                }
+                candidates.push(`${v1} / ${v1}`);
+            } 
+            // 4. Если V1 == V2 == V3 (напр. cost -> cost / cost)
+            else {
+                candidates.push(`${v1} / ${ed}`);     // cost / costed
+                candidates.push(`${ed} / ${v1}`);     // costed / cost
+                const enForm = v1.endsWith('e') ? v1 + 'n' : v1 + 'en';
+                candidates.push(`${v1} / ${enForm}`);
+                if (v1.includes('u')) candidates.push(`${v1.replace(/u/g, 'a')} / ${v1}`);
+                if (v1.includes('o')) candidates.push(`${v1.replace(/o/g, 'a')} / ${v1}`);
+                if (v1.includes('i')) candidates.push(`${v1.replace(/i/g, 'a')} / ${v1}`);
+            }
+
+            // Отфильтровываем точные совпадения с правильным ответом и повторы
+            const seen = new Set([correctAnswer, correctSimple]);
+            const filtered = [];
+            for (let c of candidates) {
+                if (c && !seen.has(c)) {
+                    seen.add(c);
+                    filtered.push(c);
+                }
+            }
+
+            // Перемешиваем кандидатов
+            filtered.sort(() => Math.random() - 0.5);
+
+            // Если доступно меньше 3, генерируем гарантированные фоллбеки
+            if (filtered.length < 3) {
+                const fallbacks = [
+                    `${v1}ed / ${v1}ed`,
+                    `${v1} / ${v1}ed`,
+                    `${v1}ed / ${v1}`,
+                    `${v2} / ${v1}ed`
+                ];
+                for (let fb of fallbacks) {
+                    if (!seen.has(fb)) {
+                        seen.add(fb);
+                        filtered.push(fb);
+                    }
+                }
+            }
+
+            const chosenDistractors = filtered.slice(0, 3);
+            const allOptions = [correctAnswer, ...chosenDistractors];
+            allOptions.sort(() => Math.random() - 0.5);
+
+            return allOptions;
+        }
+
+        function startQuiz(groupId = 'all') {
+            let pool = rawVerbs;
+            let groupTitle = 'Все глаголы';
+
+            if (groupId !== 'all') {
+                if (groupId.startsWith('10.')) {
+                    pool = rawVerbs.filter(v => v.subgroupId === groupId);
+                    groupTitle = `Подгруппа ${groupId}`;
+                } else {
+                    pool = rawVerbs.filter(v => v.groupId === groupId);
+                    const gm = verbGroups.find(g => g.id === groupId);
+                    if (gm) groupTitle = `Группа ${gm.num}: ${gm.title}`;
+                }
+            }
+
+            if (pool.length === 0) pool = rawVerbs;
+
+            // Выбираем до 10 случайных вопросов
+            const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
+            const questionVerbs = shuffledPool.slice(0, Math.min(10, shuffledPool.length));
+
+            currentQuizQuestions = questionVerbs.map(verb => {
+                const correctAnswer = `${verb.v2} / ${verb.v3}`;
+                const options = generateQuizOptions(verb);
+
+                return {
+                    verb,
+                    correctAnswer,
+                    options
+                };
+            });
+
+            currentQuizIndex = 0;
+            quizScore = 0;
+            quizMistakes = [];
+
+            quizGroupBadge.textContent = groupTitle;
+            quizTitle.textContent = `Тест: ${groupTitle}`;
+
+            quizQuestionBody.classList.remove('hidden');
+            quizResultsBody.classList.add('hidden');
+            quizResultsBody.classList.remove('flex');
+            btnQuizNext.classList.add('hidden');
+
+            quizModal.classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        window.startQuiz = startQuiz;
+
+        function renderQuizQuestion() {
+            if (currentQuizIndex >= currentQuizQuestions.length) {
+                renderQuizResults();
+                return;
+            }
+
+            const q = currentQuizQuestions[currentQuizIndex];
+            quizQuestionCounter.textContent = `Вопрос ${currentQuizIndex + 1} из ${currentQuizQuestions.length}`;
+            quizProgressBar.style.width = `${((currentQuizIndex) / currentQuizQuestions.length) * 100}%`;
+
+            quizVerbPrompt.innerHTML = `${q.verb.v1} <span class="text-base sm:text-xl font-mono text-indigo-500 font-normal ml-2">${q.verb.t1}</span>`;
+            quizMeaningPrompt.textContent = q.verb.m1;
+            quizFeedback.textContent = '';
+            btnQuizNext.classList.add('hidden');
+
+            quizOptionsContainer.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-opt-btn w-full p-4 rounded-2xl bg-slate-50 hover:bg-indigo-50/60 border-2 border-slate-200 text-slate-800 font-semibold text-center transition-all focus:outline-none text-base active:scale-95';
+                btn.textContent = opt;
+                btn.addEventListener('click', () => handleQuizAnswer(opt, btn, q));
+                quizOptionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(selectedOption, selectedBtn, q) {
+            const allOptionButtons = quizOptionsContainer.querySelectorAll('.quiz-opt-btn');
+            allOptionButtons.forEach(btn => btn.disabled = true);
+
+            const isCorrect = selectedOption === q.correctAnswer;
+
+            if (isCorrect) {
+                quizScore++;
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-200');
+                selectedBtn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-800');
+                quizFeedback.className = 'min-h-[2rem] text-center text-sm font-bold text-emerald-600 animate-bounce';
+                quizFeedback.textContent = '✓ Верно! Отличная память!';
+                speakWord(q.verb.v2);
+            } else {
+                quizMistakes.push({
+                    verb: q.verb,
+                    selected: selectedOption,
+                    correct: q.correctAnswer
+                });
+
+                // Записываем ошибку в карточки
+                const vIdx = rawVerbs.indexOf(q.verb);
+                const k = `${q.verb.v1}_${q.verb.v2}_${vIdx}`;
+                ['V1', 'V2', 'V3'].forEach(f => {
+                    const cardId = `${k}_${f}`;
+                    if (!cardStats[cardId]) cardStats[cardId] = { mistakes: 0, correct: 0, weight: 1 };
+                    cardStats[cardId].mistakes++;
+                    cardStats[cardId].weight = Math.min(8, (cardStats[cardId].weight || 1) + 2);
+                });
+                saveStats();
+                updateStatsUI();
+
+                selectedBtn.classList.remove('bg-slate-50', 'border-slate-200');
+                selectedBtn.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-800');
+
+                // Подсветить правильный
+                allOptionButtons.forEach(btn => {
+                    if (btn.textContent === q.correctAnswer) {
+                        btn.classList.remove('bg-slate-50', 'border-slate-200');
+                        btn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-800');
+                    }
+                });
+
+                quizFeedback.className = 'min-h-[2rem] text-center text-sm font-bold text-rose-600';
+                quizFeedback.textContent = `✕ Ошибка. Правильно: ${q.correctAnswer}`;
+                speakWord(q.verb.v2);
+            }
+
+            btnQuizNext.classList.remove('hidden');
+        }
+
+        function renderQuizResults() {
+            quizProgressBar.style.width = '100%';
+            quizQuestionBody.classList.add('hidden');
+            quizResultsBody.classList.remove('hidden');
+            quizResultsBody.classList.add('flex');
+            btnQuizNext.classList.add('hidden');
+
+            quizScoreText.textContent = `Правильных ответов: ${quizScore} из ${currentQuizQuestions.length} (${Math.round((quizScore / currentQuizQuestions.length) * 100)}%)`;
+
+            if (quizMistakes.length > 0) {
+                quizMistakesList.innerHTML = `
+                    <div class="font-bold text-slate-800 mb-2">Ошибки (${quizMistakes.length}), добавленные в повторение:</div>
+                    <ul class="space-y-1 text-slate-600">
+                        ${quizMistakes.map(m => `
+                            <li>• <strong class="text-slate-800">${m.verb.v1}</strong> <span class="font-mono text-slate-400 font-normal">${m.verb.t1}</span> (${m.verb.m1}): правильный ответ <span class="text-emerald-600 font-semibold">${m.correct}</span> (ваш: <span class="text-rose-500 line-through">${m.selected}</span>)</li>
+                        `).join('')}
+                    </ul>
+                `;
+                quizMistakesList.classList.remove('hidden');
+            } else {
+                quizMistakesList.innerHTML = `<div class="text-emerald-600 font-bold text-center">Идеальный результат! Все глаголы отвечены без единой ошибки.</div>`;
+                quizMistakesList.classList.remove('hidden');
+            }
+        }
+
+        // Слушатели событий
+        flashcard.addEventListener('click', flipCard);
+        btnPronounce.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = currentCards[currentIndex];
+            if (card) speakWord(card.backText);
+        });
+
+        btnPrev.addEventListener('click', () => changeCard(currentIndex - 1));
+        btnNext.addEventListener('click', () => {
+            if (currentIndex < currentCards.length - 1) {
+                changeCard(currentIndex + 1);
+            } else {
+                showCompletionModal();
+            }
+        });
+        btnRestart.addEventListener('click', restartDeck);
+        btnResetStats.addEventListener('click', resetAllStats);
+        btnWrong.addEventListener('click', () => handleAnswer(false));
+        btnCorrect.addEventListener('click', () => handleAnswer(true));
+
+        btnModeSeq.addEventListener('click', () => setMode('seq'));
+        btnModeRand.addEventListener('click', () => setMode('rand'));
+        btnModeHard.addEventListener('click', () => setMode('hard'));
+
+        // Вкладки
+        navTabCards.addEventListener('click', () => switchView('cards'));
+        navTabGroups.addEventListener('click', () => switchView('groups'));
+        btnLogoHome.addEventListener('click', () => switchView('cards'));
+        btnOpenGroupsCatalog.addEventListener('click', () => switchView('groups'));
+
+        // Выбор группы в селекторе
+        groupSelect.addEventListener('change', (e) => {
+            currentGroupFilter = e.target.value;
+            setMode(currentMode);
+            const gm = verbGroups.find(g => g.id === currentGroupFilter);
+            const title = gm ? gm.title : 'Все группы';
+            showToast(`Фильтр карточек: ${title}`);
+        });
+
+        // Поиск по глаголам в справочнике
+        verbSearchInput.addEventListener('input', (e) => {
+            renderGroupsHub(e.target.value);
+        });
+
+        btnStartOverallQuiz.addEventListener('click', () => startQuiz('all'));
+
+        // Модальное окно теста
+        btnQuizClose.addEventListener('click', () => quizModal.classList.add('hidden'));
+        quizModal.addEventListener('click', (e) => {
+            if (e.target === quizModal) quizModal.classList.add('hidden');
+        });
+        btnQuizNext.addEventListener('click', () => {
+            currentQuizIndex++;
+            renderQuizQuestion();
+        });
+        btnQuizRestart.addEventListener('click', () => {
+            startQuiz(quizGroupBadge.textContent.includes('Группа') ? (quizGroupBadge.textContent.match(/\d+/)?.[0] || 'all') : 'all');
+        });
+        btnQuizTrainCards.addEventListener('click', () => {
+            quizModal.classList.add('hidden');
+            const match = quizGroupBadge.textContent.match(/\d+(\.\d+)?/);
+            const gid = match ? match[0] : 'all';
+            startGroupPractice(gid, 'rand');
+        });
+
+        // Модальное окно завершения
+        btnModalRestart.addEventListener('click', () => {
+            hideCompletionModal();
+            restartDeck();
+        });
+        btnModalHard.addEventListener('click', () => {
+            hideCompletionModal();
+            setMode('hard');
+        });
+        btnModalClose.addEventListener('click', hideCompletionModal);
+        completionModal.addEventListener('click', (e) => {
+            if (e.target === completionModal) hideCompletionModal();
+        });
+
+        // Горячие клавиши
+        document.addEventListener('keydown', (e) => {
+            if (!quizModal.classList.contains('hidden')) return; // Не реагировать, если открыт тест
+            if (currentView !== 'cards') return; // Только в режиме карточек
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                flipCard();
+            } else if (e.code === 'Digit1' || e.code === 'Numpad1' || e.code === 'KeyX' || e.code === 'ArrowDown') {
+                e.preventDefault();
+                handleAnswer(false);
+            } else if (e.code === 'Digit2' || e.code === 'Numpad2' || e.code === 'KeyC' || e.code === 'ArrowUp' || e.code === 'Enter') {
+                e.preventDefault();
+                handleAnswer(true);
+            } else if (e.code === 'ArrowRight') {
+                if (currentIndex < currentCards.length - 1) {
+                    changeCard(currentIndex + 1);
+                } else {
+                    showCompletionModal();
+                }
+            } else if (e.code === 'ArrowLeft') {
+                changeCard(currentIndex - 1);
+            }
+        });
+
+        // Инициализация
+        updateStatsUI();
+        renderCard();
+        renderGroupsHub();
+    </script>
+</body>
+</html>
